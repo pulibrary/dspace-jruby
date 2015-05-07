@@ -5,7 +5,16 @@ module Dscriptor
     attr_writer :dspace_cfg
     attr_accessor :admin_email
 
-    def dspace_cfg; @dspace_cfg || raise('No dspace.cfg'); end
+    def initialize()
+        puts "Using #{ENV['DSPACE_HOME']}"
+        if (ENV['DSPACE_HOME']) then
+          @dspace_cfg =  "#{ENV['DSPACE_HOME']}/config/dspace.cfg";
+        end
+    end
+
+    def dspace_cfg
+     @dspace_cfg || raise('No dspace.cfg');
+    end
 
     def dspace_dir
       @dspace_dir ||= File.expand_path('../..', dspace_cfg)
