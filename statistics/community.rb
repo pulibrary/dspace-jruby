@@ -132,8 +132,13 @@ module Statistics
           end
           colnames.each do |col|
             collection = Collection.find(context, col.to_i)
+            if (collection.nil?) then
+              collection_name = "COLLECTION.#{col}"
+              collection_handle = "NULL";
+            else
             collection_name = collection.getName().gsub(/\s+/, ' ');
             collection_handle = collection.getHandle();
+            end
             naccess = @time_ranges.collect { |range| colstats[range][col] }
             outfile.puts "#{community_name}\t#{collection}\t#{collection_handle}\t#{key}\t#{naccess.join("\t")}\t#{collection_name}";
           end
