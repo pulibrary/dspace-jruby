@@ -78,7 +78,7 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-init_file = options[:yml_options] || "community_statistics.yml";
+init_file = options[:yml_options] || "solr/solr_query.yml";
 puts "using #{init_file}"
 options = YAML.load_file(init_file);
 
