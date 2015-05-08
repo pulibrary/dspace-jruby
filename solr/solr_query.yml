@@ -1,12 +1,16 @@
 solrStatiticsServer: http://localhost:18082/solr/statistics
 verbose: true
 
+# facet:true  fq.field:ip  => fact on ip 
+# fact.mincount: 1   only include if at least one access 
+# facet.time: include only if time after Jan 1 2015
+# rows: return one matching document - so we can check we do the right query 
 params:  {
     facet: true ,
     facet.field: 'ip',
     facet.mincount: 1,
-    fq: 'time:[2015-04-01T00:00:00.000Z TO NOW]',
-    rows: 10
+#    fq: 'time:[2015-04-01T00:00:00.000Z TO NOW]',
+    rows: 1
 }
 
 #  "bitstream" => {"type" => 0, "bundleName" => "ORIGINAL"},
@@ -14,12 +18,23 @@ params:  {
 # "collection" => {"type" => 3},
 # "community" => {"type" => 4}};
 
+# all bitstreams in original bundles 
+#query : {
+#    type: 0 ,
+#    bundleName: 'ORIGINAL',
+#    isBot: false
+#}
 
+# a particular item 
 query : {
-    type: 0 ,
-    bundleName: 'ORIGINAL',
+    type: 2 ,
+    id: 218,
     isBot: false
 }
+
+
+#yandex ips 
+# ip: (100.43.81.139 OR 100.43.81.140 OR 100.43.81.143 OR 100.43.85.18 OR 100.43.90.11 OR 100.43.90.12 OR 100.43.90.13 OR 100.43.90.8 OR 100.43.91.12 OR 100.43.91.22 OR 100.43.91.4 OR 31.22.4.59 OR 5.45.254.226 OR 100.43.81.150) 
 
 #yandex ips 
 # ip: (100.43.81.139 OR 100.43.81.140 OR 100.43.81.143 OR 100.43.85.18 OR 100.43.90.11 OR 100.43.90.12 OR 100.43.90.13 OR 100.43.90.8 OR 100.43.91.12 OR 100.43.91.22 OR 100.43.91.4 OR 31.22.4.59 OR 5.45.254.226 OR 100.43.81.150) 
