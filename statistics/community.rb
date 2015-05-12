@@ -1,3 +1,4 @@
+#!/usr/bin/env jruby -I lib
 require 'http';
 require 'json';
 require 'yaml';
@@ -252,8 +253,8 @@ module Statistics
 
     def self.run()
       options = {}
-      OptionParser.new do |opts|
-        opts.banner = "Usage: statistics/community.rb [options]  filename"
+      parser = OptionParser.new do |opts|
+        opts.banner = "Usage: #{__FILE__} [options]"
 
         opts.on("-c", "--collection_counts file", "cumulative counts for collections") do |v|
           options[:counts] = v
@@ -275,20 +276,28 @@ module Statistics
           puts opts
           exit
         end
-      end.parse!
-
-      init_file = options[:yml_options] || "statistics/community.yml";
-      puts "using #{init_file}"
-      yaml_options = YAML.load_file(init_file);
-
-      collection_counts_file = options.delete :counts;
-      top_bitstreams_file = options.delete :top_bitstreams;
-
-      options.each do |k, v|
-        yaml_options[k.to_s] = v;
       end
 
-      stats_maker = self.new(yaml_options);
+      begin
+        parser.parse!
+        init_file = options[:yml_options] || "statistics/community.yml";
+        puts "using #{init_file}"
+        yaml_options = YAML.load_file(init_file);
+
+        collection_counts_file = options.delete :counts;
+        top_bitstreams_file = options.delete :top_bitstreams;
+
+        if (collection_counts_file.nil? and top_bitstreams_file.nil?) then
+          raise "must give collection_counts and/or bitstreams file"
+        end
+        options.each do |k, v|
+          yaml_options[k.to_s] = v;
+        end
+        stats_maker = self.new(yaml_options);
+      rescue Exception => e
+        puts e.message;
+        puts parser.help();
+      end
 
       if (collection_counts_file) then
         collection_counts_out = File.open(collection_counts_file, 'w');
