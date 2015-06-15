@@ -4,6 +4,7 @@ require 'optparse'
 
 require 'dscriptor'
 include Dscriptor::Mixins
+
 module DSO
   module Collections
   class Copy
@@ -18,14 +19,20 @@ module DSO
 
       @projectgrantnumber = options[:grant]
 
-      Dscriptor.configure.prepare
+      Dscriptor.prepare(options[:dspace_home])
+      java_import org.dspace.content.Collection
+      java_import org.dspace.content.DSpaceObject
+      java_import org.dspace.handle.HandleManager
+      java_import org.dspace.eperson.EPerson;
 
-      @user =  EPerson.findByNetid(dspace_context, netid)
+      @dspace_context = Dscriptor.context
+
+      @user =  EPerson.findByNetid(@dspace_context, netid)
       raise "#{netid} not a valid netid" if (@user.nil?)
-      dspace_context.setCurrentUser(@user)
+      @dspace_context.setCurrentUser(@user)
 
       if (coll.index('/') > 0) then
-        @template_coll = HandleManager.resolveToObject(dspace_context, coll)
+        @template_coll = HandleManager.resolveToObject(@dspace_context, coll)
       else
         @template_coll = Collection.find(context, coll.to_i);
       end
@@ -34,7 +41,7 @@ module DSO
       end
       parent = options[:parent_handle];
       if (parent) then
-        @parent = HandleManager.resolveToObject(dspace_context, parent)
+        @parent = HandleManager.resolveToObject(@dspace_context, parent)
       else
         @parent = @template_coll.getParentObject()
       end
@@ -54,7 +61,7 @@ module DSO
       puts "naming it \t'#{@name}'"
       puts "template item with pu.projectgrantnumber=#{@projectgrantnumber}" if (@projectgrantnumber)
 
-      new_col = Collection.create(dspace_context, nil)
+      new_col = Collection.create(@dspace_context, nil)
       new_col.setMetadata("name", @name)
       @parent.addCollection(new_col)
       puts "Created #{new_col.getHandle()}"
@@ -89,7 +96,7 @@ module DSO
       puts "default authorization left in place";
 
       new_col.update()
-      dspace_context.commit()
+      @dspace_context.commit()
       puts "Commited #{new_col.getHandle()}"
 
     end
@@ -106,16 +113,22 @@ module DSO
         to.addMember(g);
       end
       to.update
+
     end
 
     def self.run()
-      options = {}
+      options = {:netid => ENV['USER']}
+
       parser = OptionParser.new do |opts|
         opts.banner = "Usage: #{__FILE__} [options] \n" +
         "copy template collection to parent object"
 
         opts.on("-c", "--collection id_or_handle", "collection template") do |v|
           options[:template_coll] = v
+        end
+
+        opts.on("-d", "--dspace_home dir", "dspace home dir") do |v|
+          options[:dspace_home] = v
         end
 
         opts.on("-e", "--eperson netid", "netid of authorized user") do |v|
@@ -142,9 +155,6 @@ module DSO
       begin
         parser.parse!
         copier = self.new(options).doit();
-      rescue Exception => e
-        puts e.message;
-        puts parser.help();
       end
     end
   end
