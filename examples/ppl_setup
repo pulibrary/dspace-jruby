@@ -1,0 +1,104 @@
+#!/usr/bin/env jruby -I lib
+
+require 'dscriptor'
+include Dscriptor::Mixins
+
+Dscriptor.prepare
+# TODO add java imports
+
+dspace_context = Dscriptor.context
+
+dspace_context.setCurrentUser(EPerson.findByNetid(dspace_context, "monikam"))
+
+def ppl_users
+  puts "creating ppl users"
+  users = [{
+               :firstname => 'James B.',
+               :lastname => 'Graham',
+               :email => 'jgraham@pppl.gov',
+               :netid => 'jgraham'
+           },
+           {
+               :firstname => 'George H.',
+               :lastname => 'Neilson Jr.',
+               :email => 'hneilson@pppl.gov',
+               :netid => 'hneilson'
+           },
+           {
+               :firstname => 'Stanley',
+               :lastname => 'Kaye',
+               :email => 'kaye@pppl.gov',
+               :netid => 'skay'
+           }
+  ]
+
+
+  users.each do |hsh|
+    puts "User  #{hsh.inspect}"
+    p = EPerson.create(dspace_context)
+    p.setCanLogIn(true)
+    p.setFirstName(hsh[:firstname])
+    p.setLastName(hsh[:lastname])
+    p.setNetid(hsh[:netid])
+    p.setEmail(hsh[:email]);
+    puts "Created #{p.toString()}"
+    p.update
+  end
+end
+
+def ppl_groups
+  ['PPPL-NSTX', 'PPPL-AdvProj'].each do |comm|
+    ['Submitters', 'Reviewers'].each do |step|
+      group = "#{comm}-#{step}"
+      g = Group.create(dspace_context);
+      g.setName(group)
+      g.update();
+      puts "Created group #{g.toString()}"
+    end
+  end
+end
+
+def add_group_member(comm, pnetid)
+  p = EPerson.find_by_netid(dspace_context, pnetid);
+  ['Submitters', 'Reviewers'].each do |step|
+    group = "#{comm}-#{step}"
+    g = Group.find_by_name(dspace_context, group);
+    puts "add Person #{p.toString} "
+    puts "add to Group #{g.toString()}"
+    g.addMember(p);
+    g.update();
+  end
+end
+
+
+def input_forms_xml(comm)
+  puts "<!-- #{comm.toString()} #{comm.getName()} -->"
+  comm.get_collections.each do |c|
+    puts "    <!-- #{c.toString()} #{c.getName()} -->"
+    puts "   <name-map collection-handle='#{c.getHandle()}' form-name='researchdata' />"
+  end
+  comm.getSubcommunities.each do |sc|
+    input_forms_xml(sc)
+  end
+end
+
+
+def setup
+#ppl_users
+#ppl_groups
+#add_group_member('PPPL-NSTX',  'skay');
+#add_group_member('PPPL-AdvProj', 'hneilson');
+# create communities and collections by hand
+
+# add willow 'wdressel' and monikam
+  ['wdressel', 'monikam'].each do |u|
+    add_group_member('PPPL-NSTX', u);
+    add_group_member('PPPL-AdvProj', u);
+  end
+
+#root = '99999/fk4vh5qr25';
+#comm = HandleManager.resolveToObject(dspace_context, root)
+#input_forms_xml(comm)
+
+#dspace_context.commit
+end

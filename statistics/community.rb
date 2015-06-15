@@ -63,7 +63,11 @@ module Statistics
         $stdout.puts self.to_yaml
       end
 
-      Dscriptor.configure.prepare
+      Dscriptor.prepare
+      java_import org.dspace.content.Community
+      java_import org.dspace.content.Collection
+      java_import org.dspace.content.Bitstream
+      @context = Dscriptor.context;
 
     end
 
@@ -132,7 +136,7 @@ module Statistics
             end
           end
           colnames.each do |col|
-            collection = Collection.find(context, col.to_i)
+            collection = Collection.find(@context, col.to_i)
             if (collection.nil?) then
               collection_name = "COLLECTION.#{col}"
               collection_handle = "NULL";
@@ -167,7 +171,7 @@ module Statistics
         (0..colnums.length/2-1).each do |i|
           c = colnums[2*i];
           n = colnums[2*i + 1];
-          bitstream = Bitstream.find(context, c.to_i);
+          bitstream = Bitstream.find(@context, c.to_i);
           line = [i, community_name, n, bitstream];
           item = bitstream.getParentObject();
           line << item << item.getHandle() << item.getName().gsub(/\s+/, ' ');
