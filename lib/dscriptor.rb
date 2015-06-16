@@ -5,6 +5,7 @@ require 'dscriptor/mixins'
 module Dscriptor
 
   ROOT = File.expand_path('../..', __FILE__)
+  @@context = nil;
 
   def self.prepare(dspace_dir = nil)
     dspector = Config.new(dspace_dir || ENV['DSPACE_HOME'] || "/dspace")
@@ -26,6 +27,7 @@ module Dscriptor
   end
 
   def self.context
-    return org.dspace.core.Context.new()
+    @@context = @@context || org.dspace.core.Context.new()
+    return @@context
   end
 end
