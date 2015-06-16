@@ -96,9 +96,7 @@ module DSO
       puts "default authorization left in place";
 
       new_col.update()
-      @dspace_context.commit()
-      puts "Commited #{new_col.getHandle()}"
-
+      return new_col
     end
 
     def copy_group(from, to)
@@ -155,10 +153,12 @@ module DSO
       begin
         parser.parse!
         copier = self.new(options).doit();
+        Dscriptor.context.commit
+        puts "Commited #{new_col.getHandle()}"
       end
     end
   end
   end
 end
 
-DSO::Collections::Copy.run();
+#DSO::Collections::Copy.run();
