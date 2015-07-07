@@ -2,6 +2,11 @@ require 'dscriptor/version'
 require 'dscriptor/config'
 require 'dscriptor/mixins'
 
+require 'dspace/dso'
+require 'dspace/deperson'
+require 'dspace/dgroup'
+require 'dspace/dcollection'
+
 module Dscriptor
 
   ROOT = File.expand_path('../..', __FILE__)
