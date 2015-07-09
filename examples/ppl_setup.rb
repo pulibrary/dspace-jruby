@@ -11,7 +11,7 @@ java_import org.dspace.handle.HandleManager
 java_import org.dspace.eperson.EPerson;
 java_import org.dspace.eperson.Group;
 
-Dscriptor.context.setCurrentUser(EPerson.findByNetid(dspace_context, "monikam"))
+Dscriptor.context.setCurrentUser(EPerson.findByNetid(Dscriptor.context, "monikam"))
 
 def eperson_find_or_create_by_netid(dspace_context, hsh)
   netid = hsh[:netid]; 
@@ -149,19 +149,6 @@ def ppl_add_group_members
 end
 
 
-def setup
-# create communities and collections by hand
-
-# add willow 'wdressel' and monikam
-  ['wdressel', 'monikam'].each do |u|
-    add_group_member('PPPL-NSTX', u);
-    add_group_member('PPPL-AdvProj', u);
-  end
-
-
-#dspace_context.commit
-end
-
 
 ntsx_comm = '99999/fk4697bj4c';
 ntsx_coll = '99999/fk4xs5x36g';
@@ -169,15 +156,17 @@ tac_comm = '99999/fk4jh3rp4r';
 iter_comm = '99999/fk49311g0k'; 
 theory_comm = '99999/fk4jh3rp4r'; 
 
-ppl_groups
-ppl_users
-ppl_add_group_members
-Dscriptor.context.commit 
+#ppl_groups
+#ppl_users
+#ppl_add_group_members
+#Dscriptor.context.commit 
+
+# create collections by hand ???
 
 #copy_collection(ntsx_coll, ntsx_comm, 'NSTX-U');
 
-#root = '99999/fk4vh5qr25';
-#comm = HandleManager.resolveToObject(dspace_context, root)
-#input_forms_xml(comm)
+root = '99999/fk4vh5qr25';
+comm = HandleManager.resolveToObject(Dscriptor.context, root)
+input_forms_xml(comm)
 
 #dspace_context.commit
