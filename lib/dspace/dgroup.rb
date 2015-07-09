@@ -47,12 +47,12 @@ class DGroup < DSO
   end
 
   def self.addMember(name, addGrouNameOrNetid)
-    group = self.find(name);
-    raise "no such group #{name}" if (group.nil)
-    add = DEPerson.find(addGrouNameOrNetid);
+    group = DGroup.find(name);
+    raise "no such group #{name}" if group.nil?
+    add = DGroup.find(addGrouNameOrNetid)
     if (add.nil?) then
-      add = self.find(addGrouNameOrNetid);
-    end
+        add = DEPerson.find(addGrouNameOrNetid);
+    end 
     raise "no such netid or group #{addGrouNameOrNetid}" if add.nil?
     group.addMember(add);
     group.update
