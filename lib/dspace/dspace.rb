@@ -5,5 +5,9 @@ class DSpace < DSO
     return nil
   end
 
+  def self.commit
+    Dscriptor.context.commit
+  end 
+
 end
 

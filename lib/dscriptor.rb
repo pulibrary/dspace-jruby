@@ -3,6 +3,7 @@ require 'dscriptor/config'
 require 'dscriptor/mixins'
 
 require 'dspace/dso'
+require 'dspace/dspace'
 require 'dspace/deperson'
 require 'dspace/dgroup'
 require 'dspace/dcollection'
