@@ -5,9 +5,17 @@ require 'optparse'
 require 'dscriptor'
 include Dscriptor::Mixins
 
-module DSO
+module DUTILS
   module Collections
+
   class Copy
+
+    # options keys:
+    # :template_coll  - either collection id or handle
+    # :name           - name of new collection
+    # :netid          - to be used on dspace context
+    # :metadata       - metadata hash for template item with string keys (eg dc.title) and string values
+    # :parent         - optional paret handle - otherwise use templatec_coll's parent
     def initialize(options)
       # $stdout.puts options.inspect
 
@@ -17,7 +25,7 @@ module DSO
       netid = options[:netid];
       raise "must give netid of authorized user" if netid.nil?
 
-      @projectgrantnumber = options[:grant]
+      @metadata = options[:metadata]
 
       Dscriptor.prepare(options[:dspace_home])
       java_import org.dspace.content.Collection
@@ -85,11 +93,15 @@ module DSO
         new_col.setLicense(@template_coll.getLicenseCollection())
       end
 
-      if (@projectgrantnumber) then
-        puts "create template item with pu.projectgrantnumber=#{@projectgrantnumber}"
+      if (not @metadata.empty?) then
+        puts "create template item"
         new_col.createTemplateItem()
         titem = new_col.getTemplateItem()
-        titem.addMetadata("pu", "projectgrantnumber", nil, nil, @projectgrantnumber)
+        @metadata.each do |key,val|
+          schema, element, qualifier = key.split('.');
+          puts "template item set #{key}=#{val}"
+          titem.addMetadata(schema, element, qualifier, nil, val)
+        end
         titem.update
       end
 

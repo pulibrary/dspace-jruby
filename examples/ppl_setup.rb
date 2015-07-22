@@ -62,23 +62,27 @@ def input_forms_xml(comm)
   end
 end
 
-def copy_collection(from, under, name)
+def copy_collection(from, under, name, metadata)
   parent_coll = DSpaceObject.fromString(Dscriptor.context, under)
   template_coll = DSpaceObject.fromString(Dscriptor.context, from);
 
   puts "Name:\n\t#{name}";
   puts "Parent:\n\t#{parent_coll.getName}";
   puts "Template Colection:\n\t#{template_coll.getName}\n\tin #{template_coll.getParentObject().getName}";
+  puts "Item Template Metadata:\n";
+  metadata.each do |key,val|
+    puts "\t#{key}=#{val}"
+  end
   options = {
       netid: 'monikam',
-      grant: 'ppl-grantnumber',
+      metadata: metadata,
       template_coll: template_coll.getHandle(),
       parent_handle: parent_coll.getHandle(),
       name: name
   };
-  copier = DSO::Collections::Copy.new(options);
+  copier = DUTILS::Collections::Copy.new(options);
   new_col = copier.doit()
-  puts "Commited #{new_col.getHandle()}"
+  puts "Created #{new_col.getHandle()}"
   return new_col;
 end
 
@@ -100,7 +104,7 @@ def ppl_users
                :firstname => 'Stanley',
                :lastname => 'Kaye',
                :email => 'kaye@pppl.gov',
-               :netid => 'skay'
+               :netid => 'skaye'
            }
   ]
 
@@ -134,7 +138,7 @@ end
 
 def ppl_add_group_members
   #skay to NSRX groups 
-  p = eperson_find_or_create_by_netid(  Dscriptor.context, :netid => 'skay' ); 
+  p = eperson_find_or_create_by_netid(  Dscriptor.context, :netid => 'skaye' );
   group_search_by_name(Dscriptor.context, 'PPPL-NSTX').each do   |g|
     group_add_member(g, p); 
   end 
@@ -150,23 +154,36 @@ end
 
 
 
-ntsx_comm = '99999/fk4697bj4c';
-ntsx_coll = '99999/fk4xs5x36g';
-tac_comm = '99999/fk4jh3rp4r';
-iter_comm = '99999/fk49311g0k'; 
-theory_comm = '99999/fk4jh3rp4r'; 
 
 #ppl_groups
 #ppl_users
 #ppl_add_group_members
-#Dscriptor.context.commit 
+
+ppl_comm = '88435/dsp01pz50gz45g';
+
+ntsx_comm = '88435/dsp01j6731612k';
+ntsx_coll = '88435/dsp018p58pg29j';
+socio_econ_coll = '88435/dsp01sf268746p';
+adv_projects = '88435/dsp01k643b3527';
+
 
 # create collections by hand ???
+#Dscriptor.context.commit
 
-#copy_collection(ntsx_coll, ntsx_comm, 'NSTX-U');
+metadata = {
+    'dc.contributor.other' => 'U. S. Department of Energy contract number DE-AC02-09CH11466',
+    'dc.publisher' => 'Princeton Plasma Physics Laboratory, Princeton University',
+    'dc.type' => 'Dataset',
+    'pu.projectgrantnumber' => '31016 G0001 10003086 101'
+}
+#copy_collection(ntsx_coll, ntsx_comm, 'NSTX-2', metadata);
+copy_collection(socio_econ_coll, adv_projects, 'Stellarators', metadata);
+copy_collection(socio_econ_coll, adv_projects, 'System Studies', metadata);
+Dscriptor.context.commit
 
-root = '99999/fk4vh5qr25';
-comm = HandleManager.resolveToObject(Dscriptor.context, root)
-input_forms_xml(comm)
+
+#root = '99999/fk4vh5qr25';
+#comm = HandleManager.resolveToObject(Dscriptor.context, root)
+#input_forms_xml(comm)
 
 #dspace_context.commit
