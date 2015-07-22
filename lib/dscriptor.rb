@@ -7,6 +7,9 @@ require 'dspace/dspace'
 require 'dspace/deperson'
 require 'dspace/dgroup'
 require 'dspace/dcollection'
+require 'dspace/dcommunity'
+
+DSO.initialize
 
 module Dscriptor
 
@@ -37,3 +40,4 @@ module Dscriptor
     return @@context
   end
 end
+Dscriptor.prepare

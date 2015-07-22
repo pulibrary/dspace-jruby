@@ -1,4 +1,49 @@
+require 'json'
+
 class DSO
+
+  BITSTREAM = 0;
+  BUNDLE = 1;
+  ITEM = 2;
+  COLLECTION = 3;
+  COMMUNITY = 4;
+  SITE = 5;
+  GROUP = 6;
+  EPERSON = 7;
+
+  DSOCLASSES = [];
+
+  def self.initialize
+    puts "DOIT"
+    DSOCLASSES[COMMUNITY] = DCommunity;
+    DSOCLASSES[COLLECTION] = DCollection;
+    DSOCLASSES[GROUP] = DGroup;
+  end
+
+  def initialize(dso)
+    @dso = dso;
+  end
+
+  def self.report(dso)
+    rpt = {};
+    if (not dso.nil?) then
+      rpt[:obj] = dso.toString()
+      if (dso.getHandle()) then
+        rpt[:handle] = dso.getHandle()
+      end
+    end
+    return rpt;
+  end
+
+  def self.pretty_report(dso)
+    rpt = {};
+    if (not dso.nil? and DSOCLASSES[dso.getType()]) then
+      rpt = DSO::DSOCLASSES[dso.getType()].send(:report, dso)
+    else
+      rpt = DSO.report(dso);
+    end
+    JSON::pretty_generate(rpt)
+  end
 
   def self.fromString(type_id_or_handle)
     java_import org.dspace.content.DSpaceObject

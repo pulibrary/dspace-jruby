@@ -59,4 +59,19 @@ class DGroup < DSO
     return group;
   end
 
+  def self.report(dso)
+    rpt = DSO.report(dso)
+    if (not dso.nil?) then
+      members = dso.getMemberGroups();
+      members.each do |m|
+           rpt[m.toString] = DGroup.report(m)
+      end
+      members = dso.getMembers();
+      if (not members.empty?) then
+          rpt['epersons'] = members.collect { |p| p.netid }
+      end
+    end
+    return rpt;
+  end
+
 end
