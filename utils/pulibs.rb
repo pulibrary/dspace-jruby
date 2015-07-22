@@ -51,10 +51,11 @@ if (yes[0] == 'Y') then
         parent_handle: parent_coll.getHandle(), 
         name: name 
     }; 
-    copier = DSO::Collections::Copy.new(options);
+    copier = DUTILS::Collections::Copy.new(options);
     new_col = copier.doit()
     Dscriptor.context.commit
     puts "Commited #{new_col.getHandle()}" 
+    puts "If restricted access: set 'DEFAULT_BITSTREAM_READ' to Princetion_IPs" 
 end 
 
 
