@@ -1,9 +1,6 @@
 #!/usr/bin/env jruby -I lib
 
-require 'csv'
-
 require 'dspace'
-
 DSpace.load
 
 puts "#Communities: #{DCommunity.all().count}";

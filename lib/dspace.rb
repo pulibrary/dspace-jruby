@@ -7,8 +7,6 @@ require 'dspace/dcommunity'
 DSO.initialize
 
 module DSpace
-  VERSION = "0.0.2"
-
   ROOT = File.expand_path('../..', __FILE__)
   @@config = nil;
 
