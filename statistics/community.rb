@@ -185,7 +185,7 @@ module Statistics
             outfile.puts line.join("\t");
             nline = nline + 1;
           end
-          break if nline >= max;
+          break if nline == max;
         end
       end
     end
@@ -197,6 +197,8 @@ module Statistics
           "/select?" +
           solrParams("facet" => "true",
                      "facet.mincount" => 1,
+                     "facet.limit" => -1,
+                     "facet.sort" => "count",
                      "facet.field" => facet_field);
       if (not timeRange.empty?) then
         query = query + "&fq=time:[#{Rack::Utils.escape(timeRange)}]";
