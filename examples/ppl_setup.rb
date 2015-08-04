@@ -177,13 +177,13 @@ metadata = {
     'pu.projectgrantnumber' => '31016 G0001 10003086 101'
 }
 #copy_collection(ntsx_coll, ntsx_comm, 'NSTX-2', metadata);
-copy_collection(socio_econ_coll, adv_projects, 'Stellarators', metadata);
-copy_collection(socio_econ_coll, adv_projects, 'System Studies', metadata);
-Dscriptor.context.commit
+#copy_collection(socio_econ_coll, adv_projects, 'Stellarators', metadata);
+#copy_collection(socio_econ_coll, adv_projects, 'System Studies', metadata);
+#Dscriptor.context.commit
 
 
-#root = '99999/fk4vh5qr25';
-#comm = HandleManager.resolveToObject(Dscriptor.context, root)
-#input_forms_xml(comm)
+root = '88435/dsp01pz50gz45g'
+comm = HandleManager.resolveToObject(Dscriptor.context, root)
+input_forms_xml(comm)
 
 #dspace_context.commit

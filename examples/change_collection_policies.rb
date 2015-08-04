@@ -1,31 +1,23 @@
 #!/usr/bin/env jruby
 
-require 'dscriptor'
+require 'dspace'
 
-Dscriptor.configure do |c|
-  c.dspace_cfg = ENV['DSPACE_CFG']
-  c.admin_email = ENV['ADMIN_EMAIL']
-  c.imports.merge %w{
-    org.dspace.authorize.AuthorizeManager
-    org.dspace.eperson.Group
-    org.dspace.core.Constants
-  }
-end.prepare
+DSpace.load
+context = DSpace.context;
 
-include Dscriptor::Mixins
+c = DCollection.fromString('116099117/236')
 
-with_collection '116099117/236' do |c|
-  anon = Group.find_by_name(context, "Anonymous")
-  AuthorizeManager.remove_all_policies(context, c)
-  AuthorizeManager.add_policy(context, c, Constants::READ, anon)
-  c.update
-  items = c.items
-  
-  while item = items.next do
-    AuthorizeManager.remove_all_policies(context, item)
-    AuthorizeManager.inherit_policies(context, c, item)
-    item.update
-  end
+anon = DGroup.find("Anonymous")
+AuthorizeManager.remove_all_policies(context, c)
+AuthorizeManager.add_policy(context, c, Constants::READ, anon)
+c.update
+
+c.items.each do |iten|
+  AuthorizeManager.remove_all_policies(context, item)
+  AuthorizeManager.inherit_policies(context, c, item)
+  item.update
 end
 
-context.complete
+puts "should do context.comit to push changes to database"
+
+

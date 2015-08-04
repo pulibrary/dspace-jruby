@@ -5,8 +5,7 @@ require 'yaml';
 require 'rack';
 require 'optparse'
 
-require 'dscriptor'
-include Dscriptor::Mixins
+require 'dspace'
 
 module Statistics
 
@@ -63,11 +62,12 @@ module Statistics
         $stdout.puts self.to_yaml
       end
 
-      Dscriptor.prepare
+      DSpace.load
+      @context = DSpace.context;
+
       java_import org.dspace.content.Community
       java_import org.dspace.content.Collection
       java_import org.dspace.content.Bitstream
-      @context = Dscriptor.context;
 
     end
 
@@ -166,20 +166,26 @@ module Statistics
         community_name = hsh['name'];
 
         stats = getStatsFor(community_query, DSpaceObjectTypes['bitstream'], time_range, "id");
-
         colnums = stats["facet_counts"]["facet_fields"]["id"];
+        nline = 0;
         (0..colnums.length/2-1).each do |i|
           c = colnums[2*i];
           n = colnums[2*i + 1];
+
           bitstream = Bitstream.find(@context, c.to_i);
           line = [i, community_name, n, bitstream];
           item = bitstream.getParentObject();
-          line << item << item.getHandle() << item.getName().gsub(/\s+/, ' ');
-          dso_parents(item).each do |p|
-            line << p << p.getHandle()
+          if (item.nil?) then
+            STDERR.puts "Bitstream #{bitstream} has no parent"
+          else
+            line << item << item.getHandle() << item.getName().gsub(/\s+/, ' ');
+            DSO.parents(item).each do |p|
+              line << p << p.getHandle()
+            end
+            outfile.puts line.join("\t");
+            nline = nline + 1;
           end
-          outfile.puts line.join("\t");
-          break if i >= max;
+          break if nline >= max;
         end
       end
     end

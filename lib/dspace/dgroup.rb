@@ -2,14 +2,14 @@ class DGroup < DSO
 
   def self.find(name)
     java_import org.dspace.eperson.Group;
-    return Group.findByName(Dscriptor.context, name);
+    return Group.findByName(DSpace.context, name);
   end
 
   def self.find_or_create(name)
     raise "must give a name " unless name
     group = self.find(name);
     if (group.nil?) then
-      group = Group.create(Dscriptor.context);
+      group = Group.create(DSpace.context);
       group.setName(group)
       group.update();
       puts "Created #{group.toString()}"
@@ -21,7 +21,7 @@ class DGroup < DSO
 
   def self.delete(name)
     java_import org.dspace.eperson.Group;
-    group = Group.findByName(Dscriptor.context, netid)
+    group = Group.findByName(DSpace.context, netid)
     if (not group.nil?)
       puts "deleting #{group}"
       group.delete();
@@ -31,7 +31,7 @@ class DGroup < DSO
 
   def self.all
     java_import org.dspace.eperson.Group;
-    Group.findAll(Dscriptor.context, 1);
+    Group.findAll(DSpace.context, 1);
   end
 
   def self.members(name)

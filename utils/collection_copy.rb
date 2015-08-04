@@ -2,8 +2,7 @@
 
 require 'optparse'
 
-require 'dscriptor'
-include Dscriptor::Mixins
+require 'dspace'
 
 module DUTILS
   module Collections
@@ -25,15 +24,15 @@ module DUTILS
       netid = options[:netid];
       raise "must give netid of authorized user" if netid.nil?
 
-      @metadata = options[:metadata]
+      @metadata = options[:metadata] || {}
 
-      Dscriptor.prepare(options[:dspace_home])
+      DSpace.load
       java_import org.dspace.content.Collection
       java_import org.dspace.content.DSpaceObject
       java_import org.dspace.handle.HandleManager
       java_import org.dspace.eperson.EPerson;
 
-      @dspace_context = Dscriptor.context
+      @dspace_context = DSpace.context
 
       @user =  EPerson.findByNetid(@dspace_context, netid)
       raise "#{netid} not a valid netid" if (@user.nil?)

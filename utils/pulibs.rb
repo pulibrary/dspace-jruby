@@ -12,7 +12,7 @@ name = name.strip;
 
 choices = [{ 
 name: 'Monographic reports and papers (Access Limited to Princeton)',
-hld:  '88435/dsp01bg257f09p'
+hdl:  '88435/dsp01bg257f09p'
 }, {
 name: 'Monographic reports and papers (Publicly Accessible)',
 hdl: '88435/dsp016q182k16g'
@@ -32,12 +32,11 @@ end
 ci = ask "Which collection ? "; 
 parent = choices[ci.to_i][:hdl]
 
-require 'dscriptor'
-Dscriptor.prepare('/dspace')
+require 'dspace'
+DSpace.load()
 
-java_import org.dspace.content.DSpaceObject
-parent_coll = DSpaceObject.fromString(Dscriptor.context,   parent) 
-template_coll  = DSpaceObject.fromString(Dscriptor.context,   '88435/dsp018c97kq48z') 
+puts parent_coll = DSO.fromString(parent)
+puts template_coll  = DSO.fromString('88435/dsp018c97kq48z')
 
 puts "Name:\n\t#{name}";  
 puts "Parent:\n\t#{parent_coll.getName}"; 
@@ -53,8 +52,8 @@ if (yes[0] == 'Y') then
     }; 
     copier = DUTILS::Collections::Copy.new(options);
     new_col = copier.doit()
-    Dscriptor.context.commit
-    puts "Commited #{new_col.getHandle()}" 
+    DSpace.commit
+    puts "Committed #{new_col.getHandle()}"
     puts "If restricted access: set 'DEFAULT_BITSTREAM_READ' to Princetion_IPs" 
 end 
 

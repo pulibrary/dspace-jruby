@@ -1,8 +1,8 @@
 class DCommunity < DSO
 
   def self.all()
-    java_import org.dspace.content.Collection;
-    return Community.findAll(Dscriptor.context)
+    java_import org.dspace.content.Community;
+    return Community.findAll(DSpace.context)
   end
 
   def self.findAll(name)
@@ -16,14 +16,14 @@ class DCommunity < DSO
     rpt = DSO.report(dso)
     if (!dso.nil?) then
       rpt[:name] = dso.getName();
-      subs =  dso.getSubcommunities();
+      subs = dso.getSubcommunities();
       if (not subs.empty?) then
-      rpt[:subcomunities] = {};
-      subs.each do |sc|
-        rpt[:subcomunities][sc.getName()] = DCommunity.report(sc);
+        rpt[:subcomunities] = {};
+        subs.each do |sc|
+          rpt[:subcomunities][sc.getName()] = DCommunity.report(sc);
+        end
       end
-      end
-      subs =  dso.getCollections();
+      subs = dso.getCollections();
       if (not subs.empty?) then
         rpt[:collections] = {};
         subs.each do |sc|

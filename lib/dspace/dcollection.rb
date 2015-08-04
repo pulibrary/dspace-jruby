@@ -2,7 +2,7 @@ class DCollection < DSO
 
   def self.all()
     java_import org.dspace.content.Collection;
-    return Collection.findAll(Dscriptor.context)
+    return Collection.findAll(DSpace.context)
   end
 
   def self.findAll(name)

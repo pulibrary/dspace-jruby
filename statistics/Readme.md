@@ -3,7 +3,7 @@ statistics/community.rb  compiles statistics information on number of accesses r
 
 it produces tab separated tables 
 > 1. showing the total number of collection, item, bitstream views/downloads per community. 
-> 2. or listing the top performing bitstreams in the given communities 
+> 2. and/or a listing of the top performing bitstreams in the given communities
     
 numbers can be filtered by time slots. 
 

@@ -14,7 +14,6 @@ class DSO
   DSOCLASSES = [];
 
   def self.initialize
-    puts "DOIT"
     DSOCLASSES[COMMUNITY] = DCommunity;
     DSOCLASSES[COLLECTION] = DCollection;
     DSOCLASSES[GROUP] = DGroup;
@@ -22,6 +21,16 @@ class DSO
 
   def initialize(dso)
     @dso = dso;
+  end
+
+  def self.parents(dso)
+    moms = [];
+    p = dso.getParentObject()
+    while p do
+      moms << p;
+      p = p.getParentObject();
+    end
+    return moms;
   end
 
   def self.report(dso)
@@ -47,12 +56,12 @@ class DSO
 
   def self.fromString(type_id_or_handle)
     java_import org.dspace.content.DSpaceObject
-    DSpaceObject.fromString(Dscriptor.context, type_id_or_handle)
+    DSpaceObject.fromString(DSpace.context, type_id_or_handle)
   end
 
   def self.policies(dso)
     java_import org.dspace.authorize.AuthorizeManager
-    pols = AuthorizeManager.getPolicies(Dscriptor.context, dso)
+    pols = AuthorizeManager.getPolicies(DSpace.context, dso)
     pols.collect do |p|
       [p.getAction(), p.getEPerson, p.getGroup]
     end
