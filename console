@@ -1,0 +1,5 @@
+#!/bin/tcsh  -f
+echo DSPACE_HOME=$DSPACE_HOME 
+echo require '"dspace"'
+echo DSO.help 
+jirb -I lib  -I .
