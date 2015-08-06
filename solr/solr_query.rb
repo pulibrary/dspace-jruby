@@ -1,3 +1,4 @@
+#!/usr/bin/env jruby -I lib
 require 'http';
 require 'yaml';
 
@@ -6,7 +7,8 @@ class SolrQuery
     @solrCoreBase = options['solrServer'] ||  options['solrStatiticsServer']  ; 
     raise "must give  solrServer/solrStatisticsServer" if not @solrCoreBase
 
-    @query = options['query'] || { 'isBot' => true } 
+    @query = options['query'] || { '-isBot' => 'true'}
+    @neg_query = options['neg_query'] || ''
 
     params = options['params'] || { } 
     @params = { "wt" => "json", "indent" => "true", "rows" => 0}.merge(params)
@@ -15,6 +17,7 @@ class SolrQuery
     if (@verbose) then
       $stdout.puts self.to_yaml
     end
+
   end
 
   def verbose?
@@ -22,7 +25,7 @@ class SolrQuery
   end
 
   def get()
-    stats = getStatsFor( @params, @query ) 
+    stats = getStatsFor( @params, @query, @neg_query )
     naccess = stats["response"]["numFound"]
     $stdout.puts "#NUMFOUND #{@query.inspect}\t#{naccess}\n";
     if (@verbose) then 
@@ -32,9 +35,13 @@ class SolrQuery
 
   private
 
-  def getStatsFor( params, qprops ) 
-    qselect  = URI(@solrCoreBase + "/select");  
+  def getStatsFor( params, qprops, neg)
+    qselect  = URI(@solrCoreBase + "/select");
     params['q'] = (qprops.map{ |k,v| "#{k}:#{v}" }).join('+')
+    if (not neg.empty?) then
+      params['q'] = params["q"] + " -" + neg;
+    end
+
     qparams = params.map{|k,v| "#{k}=#{v}"} 
     qparams = qparams.join("&"); 
     if (@verbose) then
