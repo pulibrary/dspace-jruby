@@ -161,7 +161,8 @@ module Statistics
       slot_name = @top_bitstreams['time_slot']['name'];
       outfile.puts "# Top Bitstreams downloads for #{slot_name}";
       outfile.puts "#"
-      outfile.puts ["TOP", "COMMUNITY", "N-DOWNLOADS", "BITSTREAM", "ITEM-id", "ITEM-handle", "ITEM-name", "COLLECTION-id", "COLLECTION-handle", "..."].join("\t")
+      outfile.puts ["TOP", "COMMUNITY", "N-DOWNLOADS", "BITSTREAM", "ITEM-id", "ITEM-handle", "ITEM-name",
+                    "COLLECTION-id", "COLLECTION-handle", "COLLECTION-name", "..."].join("\t")
       @community_query.each do |hsh|
         community_query = hsh['query']
         community_name = hsh['name'];
@@ -180,8 +181,14 @@ module Statistics
             STDERR.puts "Bitstream #{bitstream} has no parent"
           else
             line << item << item.getHandle() << item.getName().gsub(/\s+/, ' ');
+            prtcolname = true
             DSO.parents(item).each do |p|
               line << p << p.getHandle()
+              if (prtcolname) then
+                puts "NAME #{p.getName}"
+                line << p.getName();
+                prtcolname = false;
+              end
             end
             outfile.puts line.join("\t");
             nline = nline + 1;
