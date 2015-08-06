@@ -10,11 +10,14 @@ require 'dspace'
 module Statistics
 
   class Community
-    DSpaceObjectTypes = {"all" => {},
-                         "bitstream" => {"type" => 0, "bundleName" => "ORIGINAL"},
-                         "item" => {"type" => 2},
-                         "collection" => {"type" => 3},
-                         "community" => {"type" => 4}};
+
+
+  DSpaceObjectTypes = {  "bitstream" => { "q" => { "type" => 0},
+                                          "neg_q" => "(bundleName:TEXT OR bundleName:THUMBNAIL)"},
+                         "item" =>  { "q" => { "type" => 2}},
+                         "collection" => { "q" => { "type" => 3}},
+                         "community" => { "q" => { "type" => 4}}
+  }
 
 
     def initialize(options)
@@ -87,8 +90,7 @@ module Statistics
       {
           "bitstream" => "bitstream access count",
           "item" => "item page access count",
-          "collection" => "collection page access count",
-          "all" => "access to bitstream, items and collection pages "}.each do |key, desc|
+          "collection" => "collection page access count"}.each do |key, desc|
 
         outfile.puts "# type=#{key}:\t #{desc}  in COMMUNITY.NAME"
       end
@@ -109,8 +111,7 @@ module Statistics
         {
             "bitstream" => "bitstream access count",
             "item" => "item page access count",
-            "collection" => "collection page access count",
-            "all" => "access to bitstream, items and collection pages "}.each do |key, desc|
+            "collection" => "collection page access count"}.each do |key, desc|
 
           slot_stats = {};
 
@@ -205,9 +206,12 @@ module Statistics
       end
       query = query + "&q=" + Rack::Utils.escape('NOT epersonid:["" TO *]');
 
-      props = {"isBot" => "false"}.merge(community).merge(type).merge(@exclude_ips);
+      props = {"-isBot" => "true"}.merge(community).merge(type["q"]).merge(@exclude_ips);
       props.each do |k, v|
         query = "#{query}+#{k}:#{Rack::Utils.escape(v)}";
+      end
+      if (type["neg_q"]) then
+        query = "#{query}-#{Rack::Utils.escape(type['neg_q'])}";
       end
       if (@verbose) then
         $stdout.puts "#DEBUG #{query}"
