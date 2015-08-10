@@ -10,8 +10,7 @@ require 'dspace'
 module Statistics
 
   class Community
-    DSpaceObjectTypes = {"all" => {},
-                         "bitstream" => {"type" => 0, "bundleName" => "ORIGINAL"},
+    DSpaceObjectTypes = { "bitstream" => {"type" => 0, "bundleName" => "ORIGINAL"},
                          "item" => {"type" => 2},
                          "collection" => {"type" => 3},
                          "community" => {"type" => 4}};
@@ -87,9 +86,8 @@ module Statistics
       {
           "bitstream" => "bitstream access count",
           "item" => "item page access count",
-          "collection" => "collection page access count",
-          "all" => "access to bitstream, items and collection pages "}.each do |key, desc|
-
+          "collection" => "collection page access count"
+          }.each do |key, desc|
         outfile.puts "# type=#{key}:\t #{desc}  in COMMUNITY.NAME"
       end
       outfile.puts "# ";
@@ -105,12 +103,10 @@ module Statistics
         headers = ["COMMUNITY.NAME", "COLLECTION.ID", "COLLECTION.HANDLE", "type"] << @time_range_names
         headers.push("COLLECTION.NAME")
         outfile.puts headers.join("\t");
-
         {
             "bitstream" => "bitstream access count",
             "item" => "item page access count",
-            "collection" => "collection page access count",
-            "all" => "access to bitstream, items and collection pages "}.each do |key, desc|
+            "collection" => "collection page access count"}.each do |key, desc|
 
           slot_stats = {};
 
@@ -212,7 +208,7 @@ module Statistics
       end
       query = query + "&q=" + Rack::Utils.escape('NOT epersonid:["" TO *]');
 
-      props = {"isBot" => "false"}.merge(community).merge(type).merge(@exclude_ips);
+      props = {"-isBot" => "true"}.merge(community).merge(type).merge(@exclude_ips);
       props.each do |k, v|
         query = "#{query}+#{k}:#{Rack::Utils.escape(v)}";
       end
