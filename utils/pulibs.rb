@@ -54,8 +54,10 @@ if (yes[0] == 'Y') then
     new_col = copier.doit()
     DSpace.commit
     puts "Committed #{new_col.getHandle()}"
-    puts "If restricted access: set 'DEFAULT_BITSTREAM_READ' to Princetion_IPs" 
-end 
+    puts "If restricted access: set 'DEFAULT_BITSTREAM_READ' to Princetion_IPs"
+    puts "add to dspace/config/input-forms.xml"
+    puts '   <name-map collection-handle="' + new_col.getHandle + '" form-name="digpubs_serials"/>'
+end
 
 
 
