@@ -23,6 +23,88 @@ class DSO
     @dso = dso;
   end
 
+  def self.fromString(type_id_or_handle)
+    java_import org.dspace.content.DSpaceObject
+    DSpaceObject.fromString(DSpace.context, type_id_or_handle)
+  end
+
+  def self.find(type, id)
+    java_import org.dspace.core.Constants
+    self.fromString("#{Constants.typeText[type]}.#{id}")
+  end
+
+  def self.items(restrict_to_dso)
+    java_import org.dspace.storage.rdbms.DatabaseManager
+    java_import org.dspace.storage.rdbms.TableRow
+
+    return [] if restrict_to_dso.nil?
+    return [restrict_to_dso] if restrict_to_dso.getType == ITEM
+    return [] if restrict_to_dso.getType != COLLECTION and restrict_to_dso.getType != COMMUNITY
+
+    sql = "SELECT ITEM_ID FROM ";
+    if (restrict_to_dso.getType() == COLLECTION) then
+      sql = sql + "  Collection2Item CO WHERE  CO.Collection_Id = #{restrict_to_dso.getID}"
+    else
+      # must be COMMUNITY
+      sql = sql + " Community2Item CO  WHERE CO.Community_Id = #{restrict_to_dso.getID}"
+    end
+    puts sql;
+
+    tri = DatabaseManager.queryTable(DSpace.context, "MetadataValue",   sql)
+    dsos = [];
+    while (i = tri.next())
+      item =  self.find(DSO::ITEM, i.getIntColumn("item_id"))
+      dsos << item
+    end
+    tri.close
+    return dsos
+  end
+
+  def self.findByMetadataValue(fully_qualified_metadata_field, value_or_nil, restrict_to_dso = nil)
+    java_import org.dspace.content.MetadataSchema
+    java_import org.dspace.content.MetadataField
+    java_import org.dspace.storage.rdbms.DatabaseManager
+    java_import org.dspace.storage.rdbms.TableRow
+
+    (schema, element, qualifier) = fully_qualified_metadata_field.split('.')
+    schm = MetadataSchema.find(DSpace.context, schema)
+    field = MetadataField.find_by_element(DSpace.context, schm.getSchemaID, element, qualifier)
+
+    sql = "SELECT MV.ITEM_ID FROM MetadataValue MV";
+    if (not restrict_to_dso.nil?) then
+      if (restrict_to_dso.getType() == COLLECTION) then
+        sql = sql + " INNER JOIN Collection2Item CO  ON MV.item_id = CO.item_id "
+        restrict  = " CO.Collection_Id = #{restrict_to_dso.getID}"
+      elsif (restrict_to_dso.getType() == COMMUNITY) then
+        sql = sql + " INNER JOIN Community2Item CO  ON MV.item_id = CO.item_id "
+        restrict  = " CO.Community_Id = #{restrict_to_dso.getID}"
+      elsif (restrict_to_dso.getType == ITEM) then
+        restrict  = " MV.Item_Id = #{restrict_to_dso.getID}"
+      elsif (restrict_to_dso.getType() != ITEM) then
+        raise "can't restrict item listing to #{restrict_to_dso}";
+      end
+    end
+    sql = sql + " where MV.metadata_field_id= #{field.getFieldID} "
+    if (not value_or_nil.nil?) then
+      sql = sql + " AND MV.text_value LIKE '#{value_or_nil}'"
+    end
+    if (restrict) then
+      sql = sql + " AND #{restrict}"
+    end
+    # puts sql;
+
+    tri = DatabaseManager.queryTable(DSpace.context, "MetadataValue",   sql)
+
+    dsos = [];
+    while (i = tri.next())
+      item =  self.find(DSO::ITEM, i.getIntColumn("item_id"))
+      dsos << item
+    end
+
+    tri.close
+    return dsos
+  end
+
   def self.parents(dso)
     moms = [];
     p = dso.getParentObject()
@@ -54,16 +136,22 @@ class DSO
     JSON::pretty_generate(rpt)
   end
 
-  def self.fromString(type_id_or_handle)
-    java_import org.dspace.content.DSpaceObject
-    DSpaceObject.fromString(DSpace.context, type_id_or_handle)
-  end
-
   def self.policies(dso)
     java_import org.dspace.authorize.AuthorizeManager
     pols = AuthorizeManager.getPolicies(DSpace.context, dso)
     pols.collect do |p|
       [p.getAction(), p.getEPerson, p.getGroup]
+    end
+  end
+
+  def self.bitstreams(dso, bundle = "ORIGINAL")
+    if (dso.getType() == ITEM)
+      bundle = item.getBundles.select { |b|  b.getName() == bundle }[0]
+      if (not bundle.nil?) then
+        return bundle.getBitstreams
+      end
+    else
+      return [];
     end
   end
 
