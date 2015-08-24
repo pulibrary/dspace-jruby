@@ -17,7 +17,7 @@ p = DEPerson.find(netid);
 raise "no such eperson" if p.nil?
 print_members(p);
 
-yes = ask "want to add to same group as another user ? [Y/N] "
+yes = ask "want to add to same groups as another user ? [Y/N] "
 if (yes == "Y") then
   who = ask "who ? [enter netid] "
   o = DEPerson.find(who);

@@ -14,7 +14,7 @@ module DUTILS
     # :name           - name of new collection
     # :netid          - to be used on dspace context
     # :metadata       - metadata hash for template item with string keys (eg dc.title) and string values
-    # :parent         - optional paret handle - otherwise use templatec_coll's parent
+    # :parent         - optional parent handle - otherwise use templatec_coll's parent
     def initialize(options)
       # $stdout.puts options.inspect
 
