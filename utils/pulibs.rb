@@ -45,7 +45,7 @@ yes = ask "do you want to create ? [Y/N] "
 if (yes[0] == 'Y') then 
     options =  {
         netid: netid, 
-        grant: grant, 
+        metadata: { 'pu.projectgrantnumber' => '690-1101'},
         template_coll: template_coll.getHandle(), 
         parent_handle: parent_coll.getHandle(), 
         name: name 
@@ -57,6 +57,7 @@ if (yes[0] == 'Y') then
     puts "If restricted access: set 'DEFAULT_BITSTREAM_READ' to Princetion_IPs"
     puts "add to dspace/config/input-forms.xml"
     puts '   <name-map collection-handle="' + new_col.getHandle + '" form-name="digpubs_serials"/>'
+    puts "DID WE SET THE GRANTNUMBER IN THE ITEM TEMPLATE ? "
 end
 
 
