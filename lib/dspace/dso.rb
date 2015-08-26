@@ -48,7 +48,7 @@ class DSO
       # must be COMMUNITY
       sql = sql + " Community2Item CO  WHERE CO.Community_Id = #{restrict_to_dso.getID}"
     end
-    puts sql;
+    # puts sql;
 
     tri = DatabaseManager.queryTable(DSpace.context, "MetadataValue",   sql)
     dsos = [];
@@ -68,7 +68,9 @@ class DSO
 
     (schema, element, qualifier) = fully_qualified_metadata_field.split('.')
     schm = MetadataSchema.find(DSpace.context, schema)
+    raise "no such metadata schema: #{schema}" if schm.nil?
     field = MetadataField.find_by_element(DSpace.context, schm.getSchemaID, element, qualifier)
+    raise "no such metadata field #{fully_qualified_metadata_field}" if field.nil?
 
     sql = "SELECT MV.ITEM_ID FROM MetadataValue MV";
     if (not restrict_to_dso.nil?) then
@@ -91,7 +93,7 @@ class DSO
     if (restrict) then
       sql = sql + " AND #{restrict}"
     end
-    # puts sql;
+    puts sql;
 
     tri = DatabaseManager.queryTable(DSpace.context, "MetadataValue",   sql)
 
