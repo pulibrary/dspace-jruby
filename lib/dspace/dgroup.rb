@@ -1,8 +1,15 @@
 class DGroup < DSO
 
-  def self.find(name)
+  ADMIN_ID = 1;
+  ANONYMOUS_ID = 0;
+
+  def self.find(name_or_id)
     java_import org.dspace.eperson.Group;
-    return Group.findByName(DSpace.context, name);
+    if (name_or_id.class == String)
+      return Group.findByName(DSpace.context, name_or_id);
+    else
+      return Group.find(DSpace.context, name_or_id)
+    end
   end
 
   def self.find_or_create(name)

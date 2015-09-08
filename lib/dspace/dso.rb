@@ -23,6 +23,12 @@ class DSO
     @dso = dso;
   end
 
+  def self.fromHandle(handle)
+    java_import org.dspace.content.DSpaceObject
+    java_import org.dspace.handle.HandleManager;
+    return HandleManager.resolve_to_object(DSpace.context, handle);
+  end
+
   def self.fromString(type_id_or_handle)
     java_import org.dspace.content.DSpaceObject
     DSpaceObject.fromString(DSpace.context, type_id_or_handle)

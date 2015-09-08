@@ -12,7 +12,8 @@ module DUTILS
     # options keys:
     # :template_coll  - either collection id or handle
     # :name           - name of new collection
-    # :netid          - to be used on dspace context
+    # :netid          - netidofuser to be used as current_user in  dspace context
+    # :user           - org.dspace.EPerons object to be used as current_user in  dspace context
     # :metadata       - metadata hash for template item with string keys (eg dc.title) and string values
     # :parent         - optional parent handle - otherwise use templatec_coll's parent
     def initialize(options)
@@ -22,7 +23,8 @@ module DUTILS
       raise "must give template collection to copy" if coll.nil?
 
       netid = options[:netid];
-      raise "must give netid of authorized user" if netid.nil?
+      @user = options[:current_user];
+      raise "must give netid ofcurrent_user object" if netid.nil? and @user.nil?
 
       @metadata = options[:metadata] || {}
 
@@ -34,8 +36,10 @@ module DUTILS
 
       @dspace_context = DSpace.context
 
-      @user =  EPerson.findByNetid(@dspace_context, netid)
-      raise "#{netid} not a valid netid" if (@user.nil?)
+      if (@user.nil?) then
+        @user = EPerson.findByNetid(@dspace_context, netid)
+        raise "#{netid} not a valid netid" if (@user.nil?)
+      end
       @dspace_context.setCurrentUser(@user)
 
       if (coll.index('/') > 0) then

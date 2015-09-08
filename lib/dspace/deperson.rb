@@ -32,10 +32,10 @@ class DEPerson < DSO
      return Group.allMemberGroups(DSpace.context, p);
   end
 
-  def self.find(netid)
+  def self.find(netid_or_email)
     java_import org.dspace.eperson.EPerson;
-    raise "must give a netid value" unless netid
-    return  EPerson.findByNetid(DSpace.context, netid)
+    raise "must give a netid_or_email value" unless netid_or_email
+    return EPerson.findByNetid(DSpace.context, netid_or_email) || EPerson.findByEmail(DSpace.context, netid_or_email)
   end
 
   def self.delete(netid)
@@ -47,7 +47,5 @@ class DEPerson < DSO
     end
     return @dso;
   end
-
-
 
 end
