@@ -1,6 +1,7 @@
 #!/usr/bin/env jruby  -I lib -I utils
 require 'yaml';
 require 'faker';
+require 'dspace'
 
 test_data_file = "testdata.yml";
 
@@ -20,10 +21,10 @@ def generate(file)
           puts "created in #{parent.getName}\t#{coll.getHandle}\t#{coll.getName}\t"
           n = col["nitems"] || 0
           n.times do
-            item = fake_item(coll)
-            puts "created in #{parent.getName}\t#{coll.getHandle}\t#{coll.getName}\t#{item}"
+            md = fake_metadata
+            item = DItem.install(coll, md)
+            puts "created in #{parent.getName}\t#{coll.getHandle}\t#{coll.getName}\th=#{item.getHandle()} #{item.getName}"
           end
-          puts "";
         end
       end
     end
@@ -52,23 +53,63 @@ def create_collections(parent, name)
   return new_col;
 end
 
-def fake_item(col)
-  return "item"
+def fake_metadata
+  metadata = {};
+
+  authors = [];
+  (1+rand(3)).times do
+    authors << "#{Faker::Name.last_name}, #{Faker::Name.first_name}"
+  end
+  metadata['dc.contributor.author'] = authors;
+
+  metadata['dc.type'] = 'Article';
+
+  metadata['dc.title'] = Faker::Book.title
+  metadata['dc.publisher'] =  Faker::Book.publisher
+  metadata['dc.date.issued'] = Faker::Date.between("1/1/2000", DateTime.now).to_s
+  #journal =  Faker::Commerce.department;
+  journal = metadata['dc.title'].split[0]
+  if ( 0 == rand(1)) then
+    journal = "Journal of " + journal
+  else
+    journal = journal + " Journal";
+  end
+  metadata['dc.relation.ispartofseries'] = journal
+
+  # abstract with up to three paragraphs containing up to 10 sentences - where sentences have up to 12 words.
+  abstract = "";
+  npar = 1 + rand(3)
+  nsent = 3 + rand(10)
+  nwords = 6 + rand(12)
+  npar.times do
+    nsent.times do
+      abstract = abstract + " " + Faker::Lorem.sentence(nwords)
+    end
+    abstract = "#{abstract}\n";
+  end
+  metadata['dc.description.abstract'] = abstract
+
+  return metadata
 end
 
+def init_dspace
+  DSpace.load()
+  java_import org.dspace.content.Collection
+  java_import org.dspace.content.Community
+  java_import org.dspace.content.Item
 
-require 'dspace'
-DSpace.load()
-java_import org.dspace.content.Collection
-java_import org.dspace.content.Community
-java_import org.dspace.content.Item
+  admin_user = DGroup.find(DGroup::ADMIN_ID).getMembers()[0]
+  puts "Using user account: #{admin_user.getEmail()}"
+  DSpace.context.setCurrentUser(admin_user)
+end
 
-admin_user = DGroup.find(DGroup::ADMIN_ID).getMembers()[0]
-puts "Using user account: #{admin_user.getEmail()}"
-DSpace.context.setCurrentUser(admin_user)
-
+if (true) then
+init_dspace
 generate(test_data_file)
 DSpace.commit
+end
+
+#md =  fake_metadata
 
 
 
