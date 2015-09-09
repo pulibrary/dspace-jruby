@@ -1,6 +1,8 @@
 #!/usr/bin/env jruby  -I lib -I utils
-parent_name = "Faculty Publications"
-coll_name_file = "collection_names.txt"
+require 'yaml';
+
+test_data_file = "testdata.yml";
+test_data = YAML.load_file(test_data_file);
 
 def zap_community(comm_name)
   DCommunity.findAll(comm_name).each do |c|
@@ -16,18 +18,13 @@ def create_community(comm_name)
   return parent
 end
 
-def create_collections(parent, name_file)
-  puts "Creating Collections in\t#{parent.getName}";
-
-  File.open(name_file).each do |name|
-    name = name.strip
-
-    new_col = Collection.create(DSpace.context)
-    new_col.setMetadata("name", name)
-    new_col.update
-    parent.addCollection(new_col)
-    puts "Created #{new_col.getHandle()}\t#{new_col.getName}"
-  end
+def create_collections(parent, name)
+  puts "Creating Collections #{name}\tin\t#{parent.getName}";
+  new_col = Collection.create(DSpace.context)
+  new_col.setMetadata("name", name)
+  new_col.update
+  parent.addCollection(new_col)
+  puts "Created #{new_col.getHandle()}\t#{new_col.getName}"
 end
 
 
@@ -40,9 +37,20 @@ admin_user = DGroup.find(DGroup::ADMIN_ID).getMembers()[0]
 puts "Using user account: #{admin_user.getEmail()}"
 DSpace.context.setCurrentUser(admin_user)
 
-zap_community(parent_name)
-parent = create_community(parent_name)
-create_collections(parent, coll_name_file)
+
+test_data["communities"].each do |comm|
+  parent_name = comm["name"];
+  if parent_name then
+    zap_community(parent_name)
+    parent = create_community(parent_name)
+    collections = comm["collections"];
+    if (collections) then
+      collections.each do |col|
+        create_collections(parent, col["name"])
+      end
+    end
+  end
+end
 
 DSpace.commit
 

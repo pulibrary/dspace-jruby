@@ -1,0 +1,34 @@
+communities: [
+{
+  name: "Senior Theses"
+},
+{
+  name: "Doctoral Dissertations"
+},
+{
+  name: "Archival Collections from the Middle East"
+},
+{
+  name: "Student Protests at My University"
+},
+{
+  name: "Senior Theses"
+},
+{
+  name: "Multi Media",
+  collections: [
+    { name: "Reality Squared" }
+  ]
+},
+{
+  name: "Faculty Publications",
+  collections: [
+    { name: 'English',
+      nitems: 35 },
+    { name: 'Chemistry',
+      nitems: 57 }
+  ]
+}
+
+]
+
