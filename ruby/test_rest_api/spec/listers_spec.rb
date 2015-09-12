@@ -14,6 +14,11 @@ if (false) then
 
 end
 
+RSpec.shared_examples "collections" do
+  it "is empty when first created" do
+    expect(described_class.new).to be_empty
+  end
+end
 
 RSpec.describe "Listers" do
   DEFAULT_MAX_INLIST = 100
