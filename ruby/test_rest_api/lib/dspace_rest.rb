@@ -20,15 +20,10 @@ class DSpaceRest
     # @login_token = res.body;
   end
 
-  def list(type, params)
-    return get("/" + type, params)
-  end
-
   def last_res
     return @last_rest
   end
 
-  private
   def get(path, params)
     #TODO send login token along
     uri = @baseurl + path;
@@ -46,3 +41,4 @@ class DSpaceRest
 
 end
 
+puts "< dspace-rest"
