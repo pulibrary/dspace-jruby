@@ -1,30 +1,51 @@
 require 'dspace_rest'
 
 class DSpaceObj
-
-  def initialize(type)
-    @type = type
-    @obj = nil
+  def self.path
+    return nil
   end
 
-  def type
-    return @type
+  def initialize()
+    @attributes = {};
   end
 
-  def obj
-    return @obj
+  def attributes
+    return @attributes
   end
 
-  def  obj=(o)
-    @obj = o
+  def []=(key,value)
+    @attributes[key] = value
+    return value
   end
 
-  def self.list(type, params)
-    return App::REST_API.get("/" + type, params)
+  def [](key)
+    @attributes[key]
   end
 
-  def self.get(type, id)
-    return App::REST_API.get("/#{type}/#{id}", {})
+  def self.get_list(path, klass, params)
+    l = []
+    App::REST_API.get(path, params).each do |c|
+      obj = klass.new()
+      parse(obj, c)
+      l << obj
+    end
+    return l
   end
+
+  def self.get_one(path, klass)
+    raw_json =  App::REST_API.get(path, {})
+    obj = klass.new()
+    parse(obj, raw_json)
+    return obj
+  end
+
+  def self.parse(object, raw_json)
+    raw_json.each do |key, value|
+      unless key == 'expand'
+        object[key] =  value
+      end
+    end
+  end
+
 end
 
