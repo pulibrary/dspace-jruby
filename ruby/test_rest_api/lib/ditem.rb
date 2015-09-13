@@ -11,5 +11,9 @@ class DItem  < DSpaceObj
     return DSpaceObj.get_one("#{PATH}/#{id}", self)
   end
 
+  def bitstreams(params)
+    id = self['id'];
+    return DSpaceObj.get_list("#{PATH}/#{id}/bitstreams", DCollection, params)
+  end
 end
 
