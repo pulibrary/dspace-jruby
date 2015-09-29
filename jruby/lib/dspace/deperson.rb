@@ -4,7 +4,7 @@ class DEPerson < DSO
     java_import org.dspace.eperson.EPerson;
     raise "must give a netid value" unless netid
     raise "must give a first and last name" unless (first and last)
-    p = EPerson.findByNetid(Dscriptor.context, netid)
+    p = EPerson.findByNetid(DSpace.context, netid)
     raise "netid #{netid} already in use" unless p.nil?
 
     @dso = EPerson.create(DSpace.context)
