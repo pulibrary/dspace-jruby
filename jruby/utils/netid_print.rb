@@ -11,9 +11,11 @@ DSpace.load
 
 def print_members(p)
   puts "#{p} (ID=#{p.getID}) is member of:"
-  groups = DEPerson.groups(p).collect { |p| p.getName } 
-  groups.sort.each do |name|
-    puts "\t" + name
+  groups = {}; 
+  DEPerson.groups(p).each { |p|  groups[p.getName] = p } 
+  groups.keys.sort.each do |name|
+    g = groups[name]
+    puts ["\t","ID=#{g.getID}", name].join("\t")
   end
 end
 
