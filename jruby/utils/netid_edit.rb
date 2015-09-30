@@ -6,8 +6,9 @@ DSpace.load
 
 def print_members(p)
   puts "#{p} is member of:"
-  DEPerson.groups(p).each do |g|
-    puts "\t" + g.getName();
+  groups = DEPerson.groups(p).collect { |p| p.getName } 
+  groups.sort.each do |name|
+    puts "\t" + name
   end
   puts "";
 end
