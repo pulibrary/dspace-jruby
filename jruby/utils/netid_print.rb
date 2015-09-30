@@ -10,7 +10,7 @@ end
 DSpace.load
 
 def print_members(p)
-  puts "#{p} is member of:"
+  puts "#{p} (ID=#{p.getID}) is member of:"
   groups = DEPerson.groups(p).collect { |p| p.getName } 
   groups.sort.each do |name|
     puts "\t" + name
