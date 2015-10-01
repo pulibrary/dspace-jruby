@@ -141,7 +141,6 @@ class DSO
     else
       rpt = DSO.report(dso);
     end
-    JSON::pretty_generate(rpt)
   end
 
   def self.policies(dso)
