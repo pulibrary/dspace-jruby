@@ -1,8 +1,10 @@
 #!/usr/bin/env jruby -I lib
 require "highline/import"
 require 'dspace'
+
 DSpace.load
 
+netid, who = ARGV
 
 def print_members(p)
   puts "#{p} is member of:"
@@ -13,14 +15,20 @@ def print_members(p)
   puts "";
 end
 
-netid = ask "enter netid "
+if (netid.nil?) then 
+    netid = ask "enter netid "
+end 
+
+
 p = DEPerson.find(netid);
 raise "no such eperson" if p.nil?
 print_members(p);
 
-yes = ask "want to add to same groups as another user ? [Y/N] "
-if (yes == "Y") then
-  who = ask "who ? [enter netid] "
+if (who.nil?) then  
+    who = ask "want to add to same groups as another user ? [return/netid] "
+end 
+
+if (who) then 
   o = DEPerson.find(who);
   raise "no such eperson" if o.nil?
   print_members(o);
