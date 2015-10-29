@@ -61,7 +61,7 @@ module Statistics
         $stdout.puts self.to_yaml
       end
 
-      DSpace.load
+      DSpace.load(options['dspaceHome'])
       @context = DSpace.context;
 
       java_import org.dspace.content.Community
@@ -169,7 +169,11 @@ module Statistics
           c = colnums[2*i];
           n = colnums[2*i + 1];
 
-          bitstream = Bitstream.find(@context, c.to_i);
+          bitstream = Bitstream.find(@context, c.to_i)
+          if (bitstream.nil?) then
+            STDERR.puts "Can't find BITSTREAM.#{c_to_i}"
+            break
+          end
           line = [i, community_name, n, bitstream];
           item = bitstream.getParentObject();
           if (item.nil?) then
