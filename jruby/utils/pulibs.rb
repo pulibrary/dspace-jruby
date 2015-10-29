@@ -57,6 +57,9 @@ if (yes[0] == 'Y') then
     puts "If restricted access: set 'DEFAULT_BITSTREAM_READ' to Princetion_IPs"
     puts "add to dspace/config/input-forms.xml"
     puts '   <name-map collection-handle="' + new_col.getHandle + '" form-name="digpubs_serials"/>'
+    puts "commit message"
+    puts '   add ' + new_col.getHandle + 'to  form-name="digpubs_serials"'
+
     puts "DID WE SET THE GRANTNUMBER IN THE ITEM TEMPLATE ? "
 end
 
