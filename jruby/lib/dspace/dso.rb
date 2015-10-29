@@ -130,6 +130,9 @@ class DSO
       if (dso.getHandle()) then
         rpt[:handle] = dso.getHandle()
       end
+      if (dso.getParentObject()) then
+        rpt[:parent] = dso.getParentObject().to_s
+      end
     end
     return rpt;
   end
