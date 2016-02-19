@@ -66,47 +66,17 @@ class DSO
     return dsos
   end
 
-  def self.findByMetadataValue(fully_qualified_metadata_field, value_or_nil, restrict_to_dso = nil)
-    java_import org.dspace.content.MetadataSchema
-    java_import org.dspace.content.MetadataField
+  def self.findByHandelQuery(sql)
     java_import org.dspace.storage.rdbms.DatabaseManager
     java_import org.dspace.storage.rdbms.TableRow
+    #sql = "SELECT H.HANDLE, M.TEXT_VALUE FROM HANDLE H JOIN METADATAVALUE M ON M.ITEM_ID = H.RESOURCE_ID WHERE M.METADATA_FIELD_ID = 82 AND M.TEXT_VALUE  LIKE '2014%'"
+    sql = "SELECT HANDLE FROM HANDLE WHERE ROWNUM < 10";
 
-    (schema, element, qualifier) = fully_qualified_metadata_field.split('.')
-    schm = MetadataSchema.find(DSpace.context, schema)
-    raise "no such metadata schema: #{schema}" if schm.nil?
-    field = MetadataField.find_by_element(DSpace.context, schm.getSchemaID, element, qualifier)
-    raise "no such metadata field #{fully_qualified_metadata_field}" if field.nil?
-
-    sql = "SELECT MV.ITEM_ID FROM MetadataValue MV";
-    if (not restrict_to_dso.nil?) then
-      if (restrict_to_dso.getType() == COLLECTION) then
-        sql = sql + " INNER JOIN Collection2Item CO  ON MV.item_id = CO.item_id "
-        restrict  = " CO.Collection_Id = #{restrict_to_dso.getID}"
-      elsif (restrict_to_dso.getType() == COMMUNITY) then
-        sql = sql + " INNER JOIN Community2Item CO  ON MV.item_id = CO.item_id "
-        restrict  = " CO.Community_Id = #{restrict_to_dso.getID}"
-      elsif (restrict_to_dso.getType == ITEM) then
-        restrict  = " MV.Item_Id = #{restrict_to_dso.getID}"
-      elsif (restrict_to_dso.getType() != ITEM) then
-        raise "can't restrict item listing to #{restrict_to_dso}";
-      end
-    end
-    sql = sql + " where MV.metadata_field_id= #{field.getFieldID} "
-    if (not value_or_nil.nil?) then
-      sql = sql + " AND MV.text_value LIKE '#{value_or_nil}'"
-    end
-    if (restrict) then
-      sql = sql + " AND #{restrict}"
-    end
-    puts sql;
-
-    tri = DatabaseManager.queryTable(DSpace.context, "MetadataValue",   sql)
+    tri = DatabaseManager.queryTable(DSpace.context, "Handle",   sql)
 
     dsos = [];
-    while (i = tri.next())
-      item =  self.find(DSO::ITEM, i.getIntColumn("item_id"))
-      dsos << item
+    while (row = tri.next())
+      dsos << self.fromString(row.getStringColumn("handle"))
     end
 
     tri.close

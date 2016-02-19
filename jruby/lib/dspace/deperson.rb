@@ -1,5 +1,11 @@
 class DEPerson < DSO
 
+  def self.all()
+    java_import org.dspace.eperson.EPerson;
+    return EPerson.findAll(DSpace.context)
+  end
+
+
   def self.create(netid, first, last)
     java_import org.dspace.eperson.EPerson;
     raise "must give a netid value" unless netid
