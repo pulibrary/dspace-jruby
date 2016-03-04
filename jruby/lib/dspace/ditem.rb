@@ -1,6 +1,11 @@
 class DItem
   include DSO;
 
+  def self.all
+    java_import org.dspace.content.Item;
+    Item.findAll(DSpace.context);
+  end
+
   def bitstreams(bundle = "ORIGINAL")
     bundle = @obj.getBundles.select { |b| b.getName() == bundle }[0]
     if (not bundle.nil?) then
