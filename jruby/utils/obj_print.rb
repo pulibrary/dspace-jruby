@@ -9,14 +9,18 @@ end
 
 DSpace.load
 
-objs.each do |obj| 
-    d = DSO.fromString(obj)
-    if (d) then 
-        puts obj; 
-        puts JSON.pretty_generate(DSO.report(d))
-        puts 
+objs.each do |hdl|
+    obj = DSO.fromString(hdl)
+    if (obj) then
+        vals = []
+        parents = DSO.parents(obj)
+        parents.reverse.each do |p|
+          vals << p.getHandle << p.getName
+        end
+        vals << obj.getHandle << obj.getName;
+        puts vals.join("\t")
     else 
-       puts "ERROR: no such object #{obj}"
+       puts "ERROR: no such object #{hdl}"
     end
    puts "";
 end
