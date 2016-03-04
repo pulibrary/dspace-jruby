@@ -1,7 +1,13 @@
-class DGroup < DSO
+class DGroup
+  include DSO
 
   ADMIN_ID = 1;
   ANONYMOUS_ID = 0;
+
+  def self.all
+    java_import org.dspace.eperson.Group;
+    Group.findAll(DSpace.context, 1);
+  end
 
   def self.find(name_or_id)
     java_import org.dspace.eperson.Group;
@@ -26,58 +32,35 @@ class DGroup < DSO
     return group;
   end
 
-  def self.delete(name)
-    java_import org.dspace.eperson.Group;
-    group = Group.findByName(DSpace.context, netid)
-    if (not group.nil?)
-      puts "deleting #{group}"
-      group.delete();
-    end
-    return group;
-  end
-
-  def self.all
-    java_import org.dspace.eperson.Group;
-    Group.findAll(DSpace.context, 1);
-  end
-
-  def self.members(name)
-    group = self.find(name);
+  def members
     list = [];
-    group.getMembers.each do |m|
+    @dso.getMembers.each do |m|
       list << m;
     end
-    group.getMemberGroups.each do |m|
+    @dso.getMemberGroups.each do |m|
       list << m;
     end
     return list;
   end
 
-  def self.addMember(name, addGrouNameOrNetid)
-    group = DGroup.find(name);
-    raise "no such group #{name}" if group.nil?
+  def addMember(addGrouNameOrNetid)
     add = DGroup.find(addGrouNameOrNetid)
     if (add.nil?) then
         add = DEPerson.find(addGrouNameOrNetid);
     end 
     raise "no such netid or group #{addGrouNameOrNetid}" if add.nil?
-    group.addMember(add);
-    group.update
-    return group;
+    @dso.addMember(add);
+    @dso.update
+    return @dso;
   end
 
-  def self.report(dso)
-    rpt = DSO.report(dso)
-    if (not dso.nil?) then
-      members = dso.getMemberGroups();
-      members.each do |m|
-           rpt[m.toString] = DGroup.report(m)
-      end
-      members = dso.getMembers();
-      if (not members.empty?) then
-          rpt['epersons'] = members.collect { |p| p.netid }
-      end
+  def report
+    rpt = dso_report
+    @obj.getMemberGroups.each do |m|
+      rpt[m.toString] = DGroup.new(m).report
     end
+    list = @obj.getMembers()
+    rpt['epersons'] = list.collect { |p| DEPerson.new(p).report  } unless list.empty?
     return rpt;
   end
 

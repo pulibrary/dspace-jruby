@@ -6,5 +6,3 @@ require 'dspace/dcollection'
 require 'dspace/dcommunity'
 require 'dspace/ditem'
 
-DSO.initialize
-

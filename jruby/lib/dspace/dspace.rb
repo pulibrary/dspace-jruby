@@ -26,8 +26,78 @@ module DSpace
     self.context.commit
   end
 
+
+  BITSTREAM = 0;
+  BUNDLE = 1;
+  ITEM = 2;
+  COLLECTION = 3;
+  COMMUNITY = 4;
+  SITE = 5;
+  GROUP = 6;
+  EPERSON = 7;
+
+  def self.fromHandle(handle)
+    java_import org.dspace.content.DSpaceObject
+    java_import org.dspace.handle.HandleManager;
+    return HandleManager.resolve_to_object(DSpace.context, handle);
+  end
+
+  def self.fromString(type_id_or_handle)
+    java_import org.dspace.content.DSpaceObject
+    DSpaceObject.fromString(DSpace.context, type_id_or_handle)
+  end
+
+  def self.find(type, id)
+    java_import org.dspace.core.Constants
+    self.fromString("#{Constants.typeText[type]}.#{id}")
+  end
+
+  def self.items(restrict_to_dso)
+    java_import org.dspace.storage.rdbms.DatabaseManager
+    java_import org.dspace.storage.rdbms.TableRow
+
+    return [] if restrict_to_dso.nil?
+    return [restrict_to_dso] if restrict_to_dso.getType == ITEM
+    return [] if restrict_to_dso.getType != COLLECTION and restrict_to_dso.getType != COMMUNITY
+
+    sql = "SELECT ITEM_ID FROM ";
+    if (restrict_to_dso.getType() == COLLECTION) then
+      sql = sql + "  Collection2Item CO WHERE  CO.Collection_Id = #{restrict_to_dso.getID}"
+    else
+      # must be COMMUNITY
+      sql = sql + " Community2Item CO  WHERE CO.Community_Id = #{restrict_to_dso.getID}"
+    end
+    # puts sql;
+
+    tri = DatabaseManager.queryTable(DSpace.context, "MetadataValue",   sql)
+    dsos = [];
+    while (i = tri.next())
+      item =  self.find(DSO::ITEM, i.getIntColumn("item_id"))
+      dsos << item
+    end
+    tri.close
+    return dsos
+  end
+
   def self.kernel
     @@config.kernel;
+  end
+
+  def self.help( klasses = [ DSpace, DCommunity, DCollection, DItem, DGroup])
+    klasses.each do |klass|
+      klass.singleton_methods.sort.each do |mn|
+        m = klass.method(mn)
+        plist = m.parameters.collect { |p|
+          if (p[0] == :req) then
+            "#{p[1].to_s}"
+          else
+            "[ #{p[1].to_s} ]"
+          end
+        }
+        puts "#{klass.name}.#{mn.to_s} (#{plist.join(", ")})"
+      end
+    end
+    return nil
   end
 
   class Config

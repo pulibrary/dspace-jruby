@@ -1,4 +1,5 @@
-class DCollection < DSO
+class DCollection
+  include DSO
 
   def self.all()
     java_import org.dspace.content.Collection;
@@ -12,18 +13,16 @@ class DCollection < DSO
     end
   end
 
-  def self.report(dso)
-    rpt = DSO.report(dso)
-    if (!dso.nil?) then
-        rpt[:name]  = dso.getName();
-        group = dso.getSubmitters();
-        rpt[:submitters] = DGroup.report(group);
-        [1,2,3].each do |i|
-          group = dso.getWorkflowGroup(i);
-          if (group) then
-            rpt[ "workflow_group_#{i}".to_sym] = DGroup.report(group);
-          end
-        end
+  def report()
+    rpt = dso_report
+    rpt[:name] = @obj.getName();
+    group = @obj.getSubmitters();
+    rpt[:submitters] = DGroup.new(group).report if group
+    [1, 2, 3].each do |i|
+      group = @obj.getWorkflowGroup(i);
+      if (group) then
+        rpt["workflow_group_#{i}".to_sym] = DGroup.new(group).report;
+      end
     end
     return rpt;
   end

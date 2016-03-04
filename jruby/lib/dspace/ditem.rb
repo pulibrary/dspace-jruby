@@ -1,4 +1,13 @@
-class DItem < DSO
+class DItem
+  include DSO;
+
+  def bitstreams(bundle = "ORIGINAL")
+    bundle = @obj.getBundles.select { |b| b.getName() == bundle }[0]
+    if (not bundle.nil?) then
+      return bundle.getBitstreams
+    end
+    return [];
+  end
 
   def self.install(collection, metadata_hash)
     java_import org.dspace.content.InstallItem;

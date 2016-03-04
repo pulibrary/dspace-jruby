@@ -1,10 +1,10 @@
-class DEPerson < DSO
+class DEPerson
+  include DSO
 
   def self.all()
     java_import org.dspace.eperson.EPerson;
-    return EPerson.findAll(DSpace.context)
+    return EPerson.findAll(DSpace.context, 1)
   end
-
 
   def self.create(netid, first, last)
     java_import org.dspace.eperson.EPerson;
@@ -24,34 +24,18 @@ class DEPerson < DSO
     return @dso;
   end
 
-  def self.groups(eperson_or_string)
-    java_import org.dspace.eperson.EPerson;
-    java_import org.dspace.eperson.Group;
-    if (eperson_or_string.class == String) then
-       p = find(eperson_or_string)
-       if (p.nil?) then
-         p = DSO.fromString(eperson_or_string);
-       end
-     else
-       p = eperson_or_string
-     end
-     return Group.allMemberGroups(DSpace.context, p);
-  end
-
   def self.find(netid_or_email)
     java_import org.dspace.eperson.EPerson;
     raise "must give a netid_or_email value" unless netid_or_email
     return EPerson.findByNetid(DSpace.context, netid_or_email) || EPerson.findByEmail(DSpace.context, netid_or_email)
   end
 
-  def self.delete(netid)
-    java_import org.dspace.eperson.EPerson;
-    @dso = EPerson.findByNetid(DSpace.context, netid)
-    if (not @dso.nil?)
-      puts "deleting #{@dso}"
-      @dso.delete();
-    end
-    return @dso;
+  def groups
+     return Group.allMemberGroups(DSpace.context, @obj);
+  end
+
+  def report
+    dso_report
   end
 
 end
