@@ -61,6 +61,8 @@ if (yes[0] == 'Y') then
     puts '   add ' + new_col.getHandle + 'to  form-name="digpubs_serials"'
 
     puts "DID WE SET THE GRANTNUMBER IN THE ITEM TEMPLATE ? "
+    puts "try the ark" 
+    puts "wget -O - http://arks.princeton.edu/ark:/" + new_col.getHandle(); 
 end
 
 
