@@ -1,9 +1,20 @@
 class DItem
   include DSO;
 
-  def self.all
+  def self.iter
     java_import org.dspace.content.Item;
     Item.findAll(DSpace.context);
+  end
+
+
+  def self.all
+    java_import org.dspace.content.Item;
+    list = []
+    stp = iter
+    while (i = stp.next)
+      list << i
+    end
+    return list
   end
 
   def bitstreams(bundle = "ORIGINAL")
