@@ -1,9 +1,7 @@
-#!/usr/bin/env jruby -I lib
-
+#!/usr/bin/env jruby
 require 'dspace'
 
 DSpace.load
-
 
 comms = DCommunity.all;
 comms.each do |cm|
