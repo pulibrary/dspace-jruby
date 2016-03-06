@@ -31,11 +31,8 @@ class DEPerson
   end
 
   def groups
-     return Group.allMemberGroups(DSpace.context, @obj);
-  end
-
-  def report
-    dso_report
+    java_import org.dspace.eperson.Group;
+    return Group.allMemberGroups(DSpace.context, @obj);
   end
 
 end
