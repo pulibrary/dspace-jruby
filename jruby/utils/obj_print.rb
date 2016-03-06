@@ -1,23 +1,34 @@
 #!/usr/bin/env jruby -I lib
-require "highline/import"
+require 'optparse'
 require 'dspace'
 
-objs = ARGV
-if objs.empty? then 
-   objs <<  ask("enter handle or <TYPE>.<ID> ")
+options = {}
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: #{__FILE__} [-d]  handle.."
+
+  opts.on("-d", "--[no-]detail", "Printe detais") do |v|
+    options[:details] = v
+  end
 end
 
-DSpace.load
+begin
+  parser.parse!
+  details = options[:details]
 
-objs.each do |obj| 
-    d = DSO.fromString(obj)
-    if (d) then 
-        puts obj; 
-        puts JSON.pretty_generate(DSO.report(d))
-        puts 
-    else 
-       puts "ERROR: no such object #{obj}"
+  DSpace.load
+
+  ARGV.each do |obj|
+    d = DSpace.fromString(obj)
+    if (d) then
+      puts JSON.pretty_generate(details ? DSpace.create(d).report : DSpace.create(d).dso_report)
+    else
+      $stderr.puts "ERROR: no such object #{obj}"
     end
-   puts "";
+  end
+rescue Exception => e
+  puts e.message;
+  puts parser.help();
 end
+
+
 

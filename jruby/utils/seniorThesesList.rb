@@ -1,19 +1,18 @@
 #!/usr/bin/env jruby  -I lib -I utils
-require "highline/import"
-
-year = 2016
-schema, element, qualifier = ['pu', 'date', 'classyear']
-handle = '88435/dsp019c67wm88m'
-
-fromString = "COMMUNITY.145"
-
+require 'xmlsimple'
 require 'dspace'
+
 DSpace.load
+
+#postgres
+# fromString = "COMMUNITY.145"
+
+# dataspace
+fromString = '88435/dsp019c67wm88m'
 
 com = DSpace.fromString(fromString)
 colls = com.getCollections
 
-require 'xmlsimple'
 
 colls.each do |col|
   puts "#{col.toString} #{col.getName}"
@@ -31,7 +30,7 @@ colls.each do |col|
       ihash << h
     end
     colurl = "http://arks.princeton.edu/ark:/#{col.getHandle()}"
-    out.puts XmlSimple.xml_out({ :name => col.getName, :url => colurl, :items => ihash}, :root_name => 'collection')
+    out.puts XmlSimple.xml_out({ :name => col.getName, :url => colurl, :item => ihash}, :root_name => 'collection')
   end
 end
 

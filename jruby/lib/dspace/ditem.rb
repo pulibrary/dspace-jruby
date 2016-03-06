@@ -6,7 +6,6 @@ class DItem
     Item.findAll(DSpace.context);
   end
 
-
   def self.all
     java_import org.dspace.content.Item;
     list = []
@@ -15,6 +14,33 @@ class DItem
       list << i
     end
     return list
+  end
+
+  def self.inside(restrict_to_dso)
+    java_import org.dspace.storage.rdbms.DatabaseManager
+    java_import org.dspace.storage.rdbms.TableRow
+
+    return [] if restrict_to_dso.nil?
+    return [restrict_to_dso] if restrict_to_dso.getType == ITEM
+    return [] if restrict_to_dso.getType != COLLECTION and restrict_to_dso.getType != COMMUNITY
+
+    sql = "SELECT ITEM_ID FROM ";
+    if (restrict_to_dso.getType() == COLLECTION) then
+      sql = sql + "  Collection2Item CO WHERE  CO.Collection_Id = #{restrict_to_dso.getID}"
+    else
+      # must be COMMUNITY
+      sql = sql + " Community2Item CO  WHERE CO.Community_Id = #{restrict_to_dso.getID}"
+    end
+    # puts sql;
+
+    tri = DatabaseManager.queryTable(DSpace.context, "MetadataValue",   sql)
+    dsos = [];
+    while (i = tri.next())
+      item =  self.find(DSO::ITEM, i.getIntColumn("item_id"))
+      dsos << item
+    end
+    tri.close
+    return dsos
   end
 
   def bitstreams(bundle = "ORIGINAL")

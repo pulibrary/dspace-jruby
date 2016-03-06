@@ -2,6 +2,15 @@ module DSpace
   ROOT = File.expand_path('../..', __FILE__)
   @@config = nil;
 
+  BITSTREAM = 0;
+  BUNDLE = 1;
+  ITEM = 2;
+  COLLECTION = 3;
+  COMMUNITY = 4;
+  SITE = 5;
+  GROUP = 6;
+  EPERSON = 7;
+
   def self.load(dspace_dir = nil)
     if (@@config.nil?) then
       @@config = Config.new(dspace_dir || ENV['DSPACE_HOME'] || "/dspace")
@@ -13,7 +22,7 @@ module DSpace
 
   def self.context
     raise "must call load to initialize" if @@config.nil?
-    raise "that should not happen" if @@config.context.nil?
+    raise "should never happen" if @@config.context.nil?
     return @@config.context
   end
 
@@ -26,15 +35,6 @@ module DSpace
     self.context.commit
   end
 
-
-  BITSTREAM = 0;
-  BUNDLE = 1;
-  ITEM = 2;
-  COLLECTION = 3;
-  COMMUNITY = 4;
-  SITE = 5;
-  GROUP = 6;
-  EPERSON = 7;
 
   def self.fromHandle(handle)
     java_import org.dspace.content.DSpaceObject
@@ -52,31 +52,10 @@ module DSpace
     self.fromString("#{Constants.typeText[type]}.#{id}")
   end
 
-  def self.items(restrict_to_dso)
-    java_import org.dspace.storage.rdbms.DatabaseManager
-    java_import org.dspace.storage.rdbms.TableRow
-
-    return [] if restrict_to_dso.nil?
-    return [restrict_to_dso] if restrict_to_dso.getType == ITEM
-    return [] if restrict_to_dso.getType != COLLECTION and restrict_to_dso.getType != COMMUNITY
-
-    sql = "SELECT ITEM_ID FROM ";
-    if (restrict_to_dso.getType() == COLLECTION) then
-      sql = sql + "  Collection2Item CO WHERE  CO.Collection_Id = #{restrict_to_dso.getID}"
-    else
-      # must be COMMUNITY
-      sql = sql + " Community2Item CO  WHERE CO.Community_Id = #{restrict_to_dso.getID}"
-    end
-    # puts sql;
-
-    tri = DatabaseManager.queryTable(DSpace.context, "MetadataValue",   sql)
-    dsos = [];
-    while (i = tri.next())
-      item =  self.find(DSO::ITEM, i.getIntColumn("item_id"))
-      dsos << item
-    end
-    tri.close
-    return dsos
+  def self.create(dso)
+    raise "dso must not be nil" if dso.nil?
+    klass =  Object.const_get  "D" + dso.class.name.gsub(/.*::/,'')
+    klass.send :new, dso
   end
 
   def self.kernel

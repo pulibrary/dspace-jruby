@@ -6,7 +6,6 @@ module DSO
     raise "must pass null null obj" unless dobj
     raise "object is not a Java::OrgDspace object" unless dobj.class.to_s.start_with?("Java::OrgDspace")
     @obj = dobj
-    puts "DSO::" + @obj.toString
   end
 
   def parents
@@ -30,6 +29,10 @@ module DSO
       rpt[:parent] = @obj.getParentObject().to_s
     end
     return rpt;
+  end
+
+  def report
+    dso_report
   end
 
   def policies()
