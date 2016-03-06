@@ -5,12 +5,8 @@ require 'dspace'
 netid, who = ARGV
 
 def print_members(p)
-  puts "#{p} is member of:"
-  groups = DEPerson.groups(p).collect { |p| p.getName } 
-  groups.sort.each do |name|
-    puts "\t" + name
-  end
-  puts "";
+  puts p.getNetid + ":"
+  DSpace.create(p).group_names.each { |n| puts "\t#{n}"}
 end
 
 if (netid.nil?) then 
@@ -31,8 +27,8 @@ if (who) then
   o = DEPerson.find(who);
   raise "no such eperson" if o.nil?
   print_members(o);
-  pgroups = DEPerson.groups(p)
-  DEPerson.groups(o).each do |g|
+  pgroups = DSpace.create(p).groups
+  DSpace.create(o).groups.each do |g|
     if (pgroups.select { |pg| pg.getName() == g.getName }.empty?) then
       yes = ask "add #{p} to #{g.getName()} ? [Y/N] ";
       if (yes == "Y") then
@@ -50,7 +46,7 @@ puts "";
 
 yes = ask "want to remove from groups ? [Y/N] "
 if (yes == "Y") then
-  DEPerson.groups(p).each do |g|
+  DSpace.create(p).groups.each do |g|
     yes = ask "remove #{p} from #{g.getName()} ? [Y/N] ";
     if (yes == "Y") then
       puts "\tremoving from #{g}"
