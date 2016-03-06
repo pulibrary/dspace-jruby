@@ -35,4 +35,8 @@ class DEPerson
     return Group.allMemberGroups(DSpace.context, @obj);
   end
 
+  def group_names
+    groups.collect { |g| g.getName}.sort
+  end
+
 end

@@ -14,20 +14,11 @@ end
 
 DSpace.load
 
-def print_members(p)
-  puts "#{p.getNetid} (ID=#{p.getID}) is member of:"
-  groups = {};
-  DSpace.create(p).groups.each { |g|  groups[g.getName] = g }
-  groups.keys.sort.each do |name|
-    g = groups[name]
-    puts ["\t","ID=#{g.getID}", name].join("\t")
-  end
-end
-
 netids.each do |netid| 
     p = DEPerson.find(netid);
-    if (p) then 
-      print_members(p)
+    if (p) then
+      puts netid + ":"
+      DSpace.create(p).group_names.each { |n| puts "\t#{n}"}
     else 
        puts "ERROR: EPERSON.#{netid} does not exist"
     end

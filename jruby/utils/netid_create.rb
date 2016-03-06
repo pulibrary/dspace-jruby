@@ -10,23 +10,16 @@ last = ask("last name  ") unless last
 admin = ENV["USER"]
 puts admin
 
-DSpace.load
-DSpace.login(admin)
-
-doit = ask "create #{netid} for first: #{first} and last #{last} ? (Y/N) "
+doit = ask "create #{netid} for first_name: #{first} and last_name: #{last} ? (Y/N) "
 if (doit == "Y") then
-  p = DEPerson.find(netid)
-  if p.nil? then
-    p = DEPerson.create(netid, first, last)
-    doit = ask "commit ? (Y/N) "
-    if (doit == "Y")
-      DSpace.commit
-    end
-  else
-    puts "Exists #{p.toString()}"
+  DSpace.load
+  DSpace.login(admin)
+
+  p = DEPerson.create(netid, first, last)
+  doit = ask "commit ? (Y/N) "
+  if (doit == "Y")
+    DSpace.commit
   end
-
-
 end 
 
 

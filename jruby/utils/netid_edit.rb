@@ -2,8 +2,6 @@
 require "highline/import"
 require 'dspace'
 
-DSpace.load
-
 netid, who = ARGV
 
 def print_members(p)
@@ -17,8 +15,9 @@ end
 
 if (netid.nil?) then 
     netid = ask "enter netid "
-end 
+end
 
+DSpace.load
 
 p = DEPerson.find(netid);
 raise "no such eperson" if p.nil?
