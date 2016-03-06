@@ -1,0 +1,10 @@
+#!/usr/bin/env jruby
+
+require "bundler/setup"
+require "dspace"
+
+require "irb"
+
+puts "DSpace.load   - to connect to dspave installation"
+puts "DSpace.help   - for basic help info"
+IRB.start

@@ -1,6 +1,0 @@
-#!/bin/tcsh  -f
-echo DSPACE_HOME=$DSPACE_HOME 
-echo require '"dspace"'
-echo DSpace.load
-echo DSpace.help
-jirb -I lib  -I .
