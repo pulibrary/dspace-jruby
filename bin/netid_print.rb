@@ -15,7 +15,7 @@ end
 DSpace.load
 
 netids.each do |netid| 
-    p = DEPerson.find(netid);
+    p = DEperson.find(netid);
     if (p) then
       puts netid + ":"
       DSpace.create(p).group_names.each { |n| puts "\t#{n}"}

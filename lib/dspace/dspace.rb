@@ -15,6 +15,9 @@ module DSpace
     if (@@config.nil?) then
       @@config = Config.new(dspace_dir || ENV['DSPACE_HOME'] || "/dspace")
       self.context # initialize context now
+      java_import org.dspace.content.DSpaceObject
+      java_import org.dspace.handle.HandleManager;
+      java_import org.dspace.core.Constants
       return true
     end
     return false
@@ -27,7 +30,7 @@ module DSpace
   end
 
   def self.login(netid)
-    self.context.setCurrentUser(DEPerson.find(netid))
+    self.context.setCurrentUser(DEperson.find(netid))
     return nil
   end
 
@@ -35,21 +38,33 @@ module DSpace
     self.context.commit
   end
 
+  def self.fromString(type_id_or_handle)
+    splits = type_id_or_handle.split('.')
+    if (2 == splits.length) then
+      self.find(splits[0], splits[1])
+    else
+      self.fromHandle(type_id_or_handle)
+    end
+  end
 
   def self.fromHandle(handle)
-    java_import org.dspace.content.DSpaceObject
-    java_import org.dspace.handle.HandleManager;
     return HandleManager.resolve_to_object(DSpace.context, handle);
   end
 
-  def self.fromString(type_id_or_handle)
-    java_import org.dspace.content.DSpaceObject
-    DSpaceObject.fromString(DSpace.context, type_id_or_handle)
+  def self.fromObj(dobj)
+    klass = Object.const_get "D" + dobj.getType.capitaize
+    klass.send :new, dobj
   end
 
-  def self.find(type, id)
-    java_import org.dspace.core.Constants
-    self.fromString("#{Constants.typeText[type]}.#{id}")
+  def self.find(type_str, identifier)
+    klass = Object.const_get "D" + type_str.capitalize
+    int_id = identifier.to_i
+    if (identifier == int_id) then
+      type = self.const_get type_str.upcase
+      klass.send :new, DSpaceObject.find(DSpace.context, type, int_id)
+    elsif klass.methods.include? :find
+      klass.send :find, identifier
+    end
   end
 
   def self.create(dso)

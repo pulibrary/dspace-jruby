@@ -4,27 +4,26 @@ require 'dspace'
 
 netid, who = ARGV
 
-def print_members(p)
-  puts p.getNetid + ":"
-  DSpace.create(p).group_names.each { |n| puts "\t#{n}"}
-end
-
-if (netid.nil?) then 
+if (netid.nil?) then
     netid = ask "enter netid "
 end
 
 DSpace.load
 
-p = DEPerson.find(netid);
+def print_members(p)
+  puts p.getNetid + ":"
+  DSpace.create(p).group_names.each { |n| puts "\t#{n}"}
+end
+
+p = DEperson.find(netid);
 raise "no such eperson" if p.nil?
 print_members(p);
 
-if (who.nil?) then  
+if (who.nil?) then
     who = ask "want to add to same groups as another user ? [return/netid] "
-end 
+end
 
-if (who) then 
-  o = DEPerson.find(who);
+  o = DEperson.find(who);
   raise "no such eperson" if o.nil?
   print_members(o);
   pgroups = DSpace.create(p).groups
@@ -40,7 +39,7 @@ if (who) then
       puts "\talready member of #{g}"
     end
   end
-end
+
 puts "";
 
 

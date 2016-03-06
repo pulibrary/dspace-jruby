@@ -3,9 +3,14 @@ require 'json'
 module DSO
 
   def initialize(dobj)
-    raise "must pass null null obj" unless dobj
-    raise "object is not a Java::OrgDspace object" unless dobj.class.to_s.start_with?("Java::OrgDspace")
+    raise "must pass non null obj" unless dobj
+    type = DSpace.const_get self.class.name[1..-1].upcase
     @obj = dobj
+    raise "#{dobj} is not a #{type} object" unless @obj.getType == type
+  end
+
+  def dso
+    return @dso
   end
 
   def parents

@@ -8,14 +8,14 @@ first = ask("first name  ") unless first
 last = ask("last name  ") unless last
 
 admin = ENV["USER"]
-puts admin
+puts "Logging in as: #{admin}"
 
 doit = ask "create #{netid} for first_name: #{first} and last_name: #{last} ? (Y/N) "
 if (doit == "Y") then
   DSpace.load
   DSpace.login(admin)
 
-  p = DEPerson.create(netid, first, last)
+  p = DEperson.create(netid, first, last, netid + "@princeton.edu")
   doit = ask "commit ? (Y/N) "
   if (doit == "Y")
     DSpace.commit

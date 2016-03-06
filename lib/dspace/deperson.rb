@@ -1,4 +1,4 @@
-class DEPerson
+class DEperson
   include DSO
 
   def self.all()
@@ -6,7 +6,7 @@ class DEPerson
     return EPerson.findAll(DSpace.context, 1)
   end
 
-  def self.create(netid, first, last)
+  def self.create(netid, first, last, email)
     java_import org.dspace.eperson.EPerson;
     raise "must give a netid value" unless netid
     raise "must give a first and last name" unless (first and last)
@@ -17,7 +17,7 @@ class DEPerson
     @dso.first_name = first;
     @dso.last_name = last;
     @dso.netid = netid;
-    @dso.email = "#{netid}@princeton.edu";
+    @dso.email = email
     @dso.canLogIn = true;
     @dso.update;
     puts "Created #{@dso}"
