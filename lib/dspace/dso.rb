@@ -44,7 +44,12 @@ module DSO
     java_import org.dspace.authorize.AuthorizeManager
     pols = AuthorizeManager.getPolicies(DSpace.context, @obj)
     pols.collect do |p|
-      [p.getAction(), p.getEPerson, p.getGroup]
+      pp = p.getEPerson
+      pg = p.getGroup
+      hsh = { :action => p.getAction()}
+      hsh[:person] = pp.getName if pp
+      hsh[:group] = pg.getName if pg
+      hsh
     end
   end
 
