@@ -38,6 +38,12 @@ module DSpace
     self.context.commit
   end
 
+  def self.create(dso)
+    raise "dso must not be nil" if dso.nil?
+    klass =  Object.const_get  "D" + dso.class.name.gsub(/.*::/,'')
+    klass.send :new, dso
+  end
+
   def self.fromString(type_id_or_handle)
     splits = type_id_or_handle.split('.')
     if (2 == splits.length) then
@@ -51,11 +57,6 @@ module DSpace
     return HandleManager.resolve_to_object(DSpace.context, handle);
   end
 
-  def self.fromObj(dobj)
-    klass = Object.const_get "D" + dobj.getType.capitaize
-    klass.send :new, dobj
-  end
-
   def self.find(type_str, identifier)
     klass = Object.const_get "D" + type_str.capitalize
     int_id = identifier.to_i
@@ -65,12 +66,6 @@ module DSpace
     elsif klass.methods.include? :find
       klass.send :find, identifier
     end
-  end
-
-  def self.create(dso)
-    raise "dso must not be nil" if dso.nil?
-    klass =  Object.const_get  "D" + dso.class.name.gsub(/.*::/,'')
-    klass.send :new, dso
   end
 
   def self.kernel
@@ -110,11 +105,6 @@ module DSpace
 
     def dspace_cfg
       @dspace_cfg || raise('dspace.cfg is undefined');
-    end
-
-    def kernel
-      init
-      return @kernel
     end
 
     def context
