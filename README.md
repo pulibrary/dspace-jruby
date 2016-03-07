@@ -1,8 +1,11 @@
 # jrdspace
 
-jrdspace enables scripting of  [DSpace](https://github.com/DSpace/DSpace) Java objects from the dspace-api package. 
+jrdsapce is implemented in JRuby. 
+It provides a simple mechanism to connect to a [DSpace](https://github.com/DSpace/DSpace) installation and to access and manipulate the Java Objects managed by classes from the dspace-api package. 
 
-It needs to run under jruby and uses environment variables to locate a local DSpace installation directory and determine other defaults. 
+jrdspace contains an interactive console and therefore enables quick experimentation. 
+
+The companion project cli-dspace contains utilities that make use of jrdspace.
 
 ## Installation
 
@@ -23,13 +26,12 @@ Install the gem:
 bundle install
 ```
 
-## Usage
+##  Usage 
 
-Run one of the included executabes, see the [bin directory](/bin); for example
-
+To use in scripts simply include the following 
 ```
-bundle exec netid_edit
-bundle exec idspace
+require 'dspace' 
+DSpace.load(dspace_install_dir) 
 ```
 
 ## Interactive Usage 
@@ -38,7 +40,6 @@ The included idspace command starts an interactive console.
 
 ```
 bundle exec idspace 
-> require 'dspace'
 > DSpace.load          # load DSpace jars and configurations 
 > DSpace.help          # lists all static methods of classes in jrdspace 
 ```
@@ -55,7 +56,15 @@ DSpace.load                                  # load DSpace jars and configuratio
 DSpace.load("/home/you/installs/dspace")     # load from /home/you/installs/dspace
 ```
 
-After a succesfull load you can start using the included classes DSpace, DCommunity, DCollection, ... from [lib/dspace](lib/dspace) 
+The load method sets the environment up by reading configurations from the dspace.cfg file and by requiring all jar files from the ${dspace.dir}/lib directory.  After a succesfull load you can start using Java classes by importing them, for example: 
+```
+ java_import org.dspace.content.Item;
+``` 
+The included classes DSpace, DCommunity, DCollection, ... from [lib/dspace](lib/dspace) provide convenience methods, such as retrieving all Communities  or the Group with a given name: 
+```
+DCommunity.all
+DSpace.fromString('GROUP.name')
+```
 
 If you want to make changes you can 'login' 
 
@@ -64,7 +73,7 @@ DSpace.login               # login with ENV['USER']
 DSpace.login ('netid')     # login with given netid
 ```
 
-Remember to call the commit methods if you want changes to be saved to the database 
+Remember to call the commit method if you want to save changes
 
 ```
 DSpace.commit 
@@ -81,7 +90,7 @@ DSpace.fromString ('EPERSON.a_netid')
 DCommunity.all 
 DGroup.find('group_name')
 ```
-These methods use the relevant Java classes to locate the objects and return nil or a reference to the Java object found. All public Java methods can be called on returned refernces. 
+These methods use the relevant Java classes to locate the objects and return nil or a reference to the Java object found. All public Java methods can be called on returned references. 
 
 The following prints a rudimentary community report:
 ```
