@@ -10,7 +10,7 @@ module DSO
   end
 
   def dso
-    return @dso
+    return @obj
   end
 
   def parents
