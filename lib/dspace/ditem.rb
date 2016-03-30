@@ -21,22 +21,22 @@ class DItem
     java_import org.dspace.storage.rdbms.TableRow
 
     return [] if restrict_to_dso.nil?
-    return [restrict_to_dso] if restrict_to_dso.getType == ITEM
-    return [] if restrict_to_dso.getType != COLLECTION and restrict_to_dso.getType != COMMUNITY
+    return [restrict_to_dso] if restrict_to_dso.getType == DSpace::ITEM
+    return [] if restrict_to_dso.getType != DSpace::COLLECTION and restrict_to_dso.getType != DSpace::COMMUNITY
 
     sql = "SELECT ITEM_ID FROM ";
-    if (restrict_to_dso.getType() == COLLECTION) then
+    if (restrict_to_dso.getType() == DSpace::COLLECTION) then
       sql = sql + "  Collection2Item CO WHERE  CO.Collection_Id = #{restrict_to_dso.getID}"
     else
       # must be COMMUNITY
       sql = sql + " Community2Item CO  WHERE CO.Community_Id = #{restrict_to_dso.getID}"
     end
-    # puts sql;
+    puts sql;
 
-    tri = DatabaseManager.queryTable(DSpace.context, "MetadataValue",   sql)
+    tri = DatabaseManager.query(DSpace.context, sql)
     dsos = [];
     while (i = tri.next())
-      item =  self.find(DSO::ITEM, i.getIntColumn("item_id"))
+      item =  DSpace.find('ITEM', i.getIntColumn("item_id"))
       dsos << item
     end
     tri.close
