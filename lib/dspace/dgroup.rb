@@ -23,7 +23,7 @@ class DGroup
     group = self.find(name);
     if (group.nil?) then
       group = Group.create(DSpace.context);
-      group.setName(group)
+      group.setName(name)
       group.update();
       puts "Created #{group.toString()}"
     else
