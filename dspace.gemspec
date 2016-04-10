@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Monika Mevenkamp"]
   spec.email         = ["monikam@princeton.edu"]
 
-  spec.summary       =  %q{Jruby classes and utils that interact with the dspace-api Java classes - v5}
-  spec.description   = %q{Documentation at github}
+  spec.summary       =  %q{Jruby classes that interact with the dspace-api Java classes - v5}
+  spec.description   =  %q{jrdspace enables scripting of the dspace-api Java objects in a DSpace installation; it includes an interactive console}
   spec.homepage      = "https://github.com/akinom/dspace-jruby"
   spec.license       = "MIT"
 

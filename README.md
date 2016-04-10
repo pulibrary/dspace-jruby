@@ -1,11 +1,12 @@
 # jrdspace
 
 jrdsapce is implemented in JRuby. 
+
 It provides a simple mechanism to connect to a [DSpace](https://github.com/DSpace/DSpace) installation and to access and manipulate the Java Objects managed by classes from the dspace-api package. 
 
 jrdspace contains an interactive console and therefore enables quick experimentation. 
 
-The companion project cli-dspace contains utilities that make use of jrdspace.
+The companion project [cli-dspace](https://github.com/akinom/dspace-cli)  contains utilities that make use of jrdspace.
 
 ## Installation
 
@@ -18,7 +19,10 @@ The companion project cli-dspace contains utilities that make use of jrdspace.
 
 Add the gem to your projects Gemfile: 
 ```
+gem 'jrdspace'      # pull from rubygems 
+
 gem 'jrdspace', :git => 'https://github.com/akinom/dspace-jruby', :branch => 'master`
+
 ```
 
 Install the gem:
