@@ -12,7 +12,6 @@ module DSpace
   EPERSON = 7;
 
   def self.objTypeId(type_str_or_int)
-    java_import org.dspace.core.Constants
     obj_typ = Constants.typeText.find_index type_str_or_int
     if  obj_typ.nil? then
       obj_typ = Integer(type_str_or_int)
@@ -22,7 +21,6 @@ module DSpace
   end
 
   def self.objTypeStr(type_str_or_int)
-    java_import org.dspace.core.Constants
     return type_str_or_int  if Constants.typeText.find_index type_str_or_int
     obj_typ_id = Integer(type_str_or_int)
     raise "no such object type #{type_str_or_int}" unless Constants.typeText[obj_typ_id]
@@ -33,10 +31,12 @@ module DSpace
     if (@@config.nil?) then
       @@config = Config.new(dspace_dir || ENV['DSPACE_HOME'] || "/dspace")
       self.context # initialize context now
-      java_import org.dspace.content.DSpaceObject
       java_import org.dspace.handle.HandleManager;
       java_import org.dspace.core.Constants
+      java_import org.dspace.content.DSpaceObject
       return true
+    else
+      puts "Already loaded #{@@config.dspace_cfg}"
     end
     return false
   end
@@ -76,15 +76,15 @@ module DSpace
   end
 
   def self.find(type_str_or_int, identifier)
-    type_str = objTypeStr(type_str_or_int)
-    type_id = objTypeId(type_str_or_int)
-    klass = Object.const_get "D" + type_str.capitalize
+    type_str = DSpace.objTypeStr(type_str_or_int)
+    type_id = DSpace.objTypeId(type_str)
     int_id = identifier.to_i
-    if (identifier == int_id) then
-      DSpaceObject.find(DSpace.context, type_id, int_id)
-    elsif klass.methods.include? :find
-      klass.send :find, identifier
+    obj = DSpaceObject.find(DSpace.context, type_id, int_id)
+    if obj.nil? and klass.methods.include? :find
+      klass = Object.const_get "D" + type_str.capitalize
+      obj = klass.send :find, identifier
     end
+    return obj
   end
 
   def self.findByMetadataValue(fully_qualified_metadata_field, value_or_nil, restrict_to_type)
