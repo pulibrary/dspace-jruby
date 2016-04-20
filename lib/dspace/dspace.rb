@@ -48,7 +48,7 @@ module DSpace
   end
 
   def self.login(netid)
-    self.context.setCurrentUser(DEperson.find(netid))
+    self.context.setCurrentUser(DEPerson.find(netid))
     return nil
   end
 

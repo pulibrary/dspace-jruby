@@ -46,7 +46,7 @@ class DGroup
   def addMember(addGrouNameOrNetid)
     add = DGroup.find(addGrouNameOrNetid)
     if (add.nil?) then
-        add = DEperson.find(addGrouNameOrNetid);
+        add = DEPerson.find(addGrouNameOrNetid);
     end 
     raise "no such netid or group #{addGrouNameOrNetid}" if add.nil?
     @dso.addMember(add);
@@ -60,7 +60,7 @@ class DGroup
       rpt[m.toString] = DGroup.new(m).report
     end
     list = @obj.getMembers()
-    rpt['epersons'] = list.collect { |p| DEperson.new(p).report  } unless list.empty?
+    rpt['epersons'] = list.collect { |p| DEerson.new(p).report  } unless list.empty?
     return rpt;
   end
 

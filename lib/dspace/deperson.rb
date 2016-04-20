@@ -1,4 +1,4 @@
-class DEperson
+class DEPerson
   include DSO
 
   def self.all()
