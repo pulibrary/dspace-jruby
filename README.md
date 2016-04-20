@@ -30,6 +30,11 @@ Install the gem:
 bundle install
 ```
 
+Please note that I am still updating this gem ferquently as I discover bugs. So please keep do update frequently with 
+```
+bundle update
+```
+
 ##  Usage 
 
 To use in scripts simply include the following 
