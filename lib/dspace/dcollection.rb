@@ -13,6 +13,11 @@ class DCollection
     end
   end
 
+  def workflows
+    java_import org.dspace.workflow.WorkflowItem
+    WorkflowItem.findByCollection(DSpace.context, @obj)
+  end
+
   def report()
     rpt = dso_report
     rpt[:name] = @obj.getName();
