@@ -80,10 +80,6 @@ module DSpace
     type_id = DSpace.objTypeId(type_str)
     int_id = identifier.to_i
     obj = DSpaceObject.find(DSpace.context, type_id, int_id)
-    if obj.nil? and klass.methods.include? :find
-      klass = Object.const_get "D" + type_str.capitalize
-      obj = klass.send :find, identifier
-    end
     return obj
   end
 
@@ -162,6 +158,13 @@ module DSpace
       return @context
     end
 
+    def context_renew
+      raise "must call load to initialize" if @@config.nil?
+      raise "should never happen" if @@config.context.nil?
+      @context.abort if @context
+      @context = org.dspace.core.Context.new()
+    end
+
     def init
       if @context.nil? then
         puts "Loading jars"
@@ -183,5 +186,21 @@ module DSpace
     end
   end
 
+
+  def self.to_string(java_obj)
+     return "nil" unless java_obj
+     klass = java_obj.getClass.getName
+     if (klass == "org.dspace.content.MetadataField") then
+       java_import org.dspace.content.MetadataField
+       java_import org.dspace.content.MetadataSchema
+
+       schema = MetadataSchema.find(DSpace.context, java_obj.schemaID)
+       str = "#{schema.getName}.#{java_obj.element}"
+       str += ".#{java_obj.qualifier}" if java_obj.qualifier
+       str
+     else
+       java_obj.toString
+     end
+  end
 end
 
