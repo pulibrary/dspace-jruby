@@ -47,6 +47,12 @@ module DSpace
     return @@config.context
   end
 
+  def self.context_renew
+    raise "must call load to initialize" if @@config.nil?
+    raise "should never happen" if @@config.context.nil?
+    return @@config.context_renew
+  end
+
   def self.login(netid)
     self.context.setCurrentUser(DEPerson.find(netid))
     return nil
@@ -159,8 +165,6 @@ module DSpace
     end
 
     def context_renew
-      raise "must call load to initialize" if @@config.nil?
-      raise "should never happen" if @@config.context.nil?
       @context.abort if @context
       @context = org.dspace.core.Context.new()
     end
