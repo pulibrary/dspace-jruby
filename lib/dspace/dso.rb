@@ -65,7 +65,7 @@ module DSO
     mvs = [];
     while (iter = tri.next())
       field =  MetadataField.find(DSpace.context, iter.getIntColumn("metadata_field_id"))
-      mvs <<  [ DSpace.to_string(field), iter.getStringColumn("text_value") ]
+      mvs <<  [ DSpace.toString(field), iter.getStringColumn("text_value") ]
     end
     tri.close
     return mvs

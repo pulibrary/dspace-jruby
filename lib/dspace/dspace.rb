@@ -69,11 +69,28 @@ module DSpace
   end
 
   def self.fromString(type_id_or_handle)
+    #TODO handle MetadataField string
     splits = type_id_or_handle.split('.')
     if (2 == splits.length) then
       self.find(splits[0], splits[1])
     else
       self.fromHandle(type_id_or_handle)
+    end
+  end
+
+  def self.toString(java_obj)
+    return "nil" unless java_obj
+    klass = java_obj.getClass.getName
+    if (klass == "org.dspace.content.MetadataField") then
+      java_import org.dspace.content.MetadataField
+      java_import org.dspace.content.MetadataSchema
+
+      schema = MetadataSchema.find(DSpace.context, java_obj.schemaID)
+      str = "#{schema.getName}.#{java_obj.element}"
+      str += ".#{java_obj.qualifier}" if java_obj.qualifier
+      str
+    else
+      java_obj.toString
     end
   end
 
@@ -118,7 +135,6 @@ module DSpace
       tri.close
       return dsos
     end
-
 
   def self.kernel
     @@config.kernel;
@@ -190,21 +206,5 @@ module DSpace
     end
   end
 
-
-  def self.to_string(java_obj)
-     return "nil" unless java_obj
-     klass = java_obj.getClass.getName
-     if (klass == "org.dspace.content.MetadataField") then
-       java_import org.dspace.content.MetadataField
-       java_import org.dspace.content.MetadataSchema
-
-       schema = MetadataSchema.find(DSpace.context, java_obj.schemaID)
-       str = "#{schema.getName}.#{java_obj.element}"
-       str += ".#{java_obj.qualifier}" if java_obj.qualifier
-       str
-     else
-       java_obj.toString
-     end
-  end
 end
 

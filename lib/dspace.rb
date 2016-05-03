@@ -6,4 +6,4 @@ require 'dspace/dcollection'
 require 'dspace/dcommunity'
 require 'dspace/ditem'
 require 'dspace/dbitstream'
-
+require 'dspace/dworkflowitem'
