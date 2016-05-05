@@ -6,6 +6,12 @@ class DCollection
     return Collection.findAll(DSpace.context)
   end
 
+  def self.find(id)
+    java_import org.dspace.content.Collection;
+    return Collection.find(DSpace.context, id)
+  end
+
+
   def self.findAll(name)
     java_import org.dspace.content.Collection;
     self.all.select do |c|

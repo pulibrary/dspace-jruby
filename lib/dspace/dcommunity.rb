@@ -6,6 +6,11 @@ class DCommunity
     return Community.findAll(DSpace.context)
   end
 
+  def self.find(id)
+    java_import org.dspace.content.Community;
+    return Community.find(DSpace.context, id)
+  end
+
   def self.findAll(name)
     java_import org.dspace.content.Community;
     self.all.select do |c|

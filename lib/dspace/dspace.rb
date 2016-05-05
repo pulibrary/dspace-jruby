@@ -13,7 +13,7 @@ module DSpace
 
   def self.objTypeId(type_str_or_int)
     obj_typ = Constants.typeText.find_index type_str_or_int
-    if  obj_typ.nil? then
+    if obj_typ.nil? then
       obj_typ = Integer(type_str_or_int)
       raise "no such object typ #{type_str_or_int}" unless Constants.typeText[obj_typ]
     end
@@ -21,7 +21,7 @@ module DSpace
   end
 
   def self.objTypeStr(type_str_or_int)
-    return type_str_or_int  if Constants.typeText.find_index type_str_or_int
+    return type_str_or_int if Constants.typeText.find_index type_str_or_int
     obj_typ_id = Integer(type_str_or_int)
     raise "no such object type #{type_str_or_int}" unless Constants.typeText[obj_typ_id]
     return Constants.typeText[obj_typ_id];
@@ -64,15 +64,61 @@ module DSpace
 
   def self.create(dso)
     raise "dso must not be nil" if dso.nil?
-    klass =  Object.const_get  "D" + dso.class.name.gsub(/.*::/,'')
+    klass = Object.const_get "D" + dso.class.name.gsub(/.*::/, '')
     klass.send :new, dso
+  end
+
+  def self.fromHandle(handle)
+    return HandleManager.resolve_to_object(DSpace.context, handle);
+  end
+
+  def self.find(type_str_or_int, identifier)
+    type_str = DSpace.objTypeStr(type_str_or_int)
+    type_id = DSpace.objTypeId(type_str)
+    klass = Object.const_get "D" + type_str_or_int.capitalize
+    begin
+      id = Integer(identifier)
+    rescue
+      id = identifier
+    end
+    return klass.send :find, id
+  end
+
+  def self.findByMetadataValue(fully_qualified_metadata_field, value_or_nil, restrict_to_type)
+    java_import org.dspace.content.MetadataSchema
+    java_import org.dspace.content.MetadataField
+    java_import org.dspace.storage.rdbms.DatabaseManager
+    java_import org.dspace.storage.rdbms.TableRow
+
+    (schema, element, qualifier) = fully_qualified_metadata_field.split('.')
+    schm = MetadataSchema.find(DSpace.context, schema)
+    raise "no such metadata schema: #{schema}" if schm.nil?
+    field = MetadataField.find_by_element(DSpace.context, schm.getSchemaID, element, qualifier)
+    raise "no such metadata field #{fully_qualified_metadata_field}" if field.nil?
+
+    sql = "SELECT MV.resource_id, MV.resource_type_id  FROM MetadataValue MV";
+    sql = sql + " where MV.metadata_field_id= #{field.getFieldID} "
+    if (not value_or_nil.nil?) then
+      sql = sql + " AND MV.text_value LIKE '#{value_or_nil}'"
+    end
+    if (restrict_to_type) then
+      sql = sql + " AND MV.resource_type_id = #{objTypeId(restrict_to_type)}"
+    end
+
+    tri = DatabaseManager.queryTable(DSpace.context, "MetadataValue", sql)
+    dsos = [];
+    while (iter = tri.next())
+      dsos << self.find(iter.getIntColumn("resource_type_id"), iter.getIntColumn("resource_id"))
+    end
+    tri.close
+    return dsos
   end
 
   def self.fromString(type_id_or_handle)
     #TODO handle MetadataField string
     splits = type_id_or_handle.split('.')
     if (2 == splits.length) then
-      self.find(splits[0], splits[1])
+      self.find(splits[0].upcase, splits[1])
     else
       self.fromHandle(type_id_or_handle)
     end
@@ -94,53 +140,11 @@ module DSpace
     end
   end
 
-  def self.fromHandle(handle)
-    return HandleManager.resolve_to_object(DSpace.context, handle);
-  end
-
-  def self.find(type_str_or_int, identifier)
-    type_str = DSpace.objTypeStr(type_str_or_int)
-    type_id = DSpace.objTypeId(type_str)
-    int_id = identifier.to_i
-    obj = DSpaceObject.find(DSpace.context, type_id, int_id)
-    return obj
-  end
-
-  def self.findByMetadataValue(fully_qualified_metadata_field, value_or_nil, restrict_to_type)
-      java_import org.dspace.content.MetadataSchema
-      java_import org.dspace.content.MetadataField
-      java_import org.dspace.storage.rdbms.DatabaseManager
-      java_import org.dspace.storage.rdbms.TableRow
-
-      (schema, element, qualifier) = fully_qualified_metadata_field.split('.')
-      schm = MetadataSchema.find(DSpace.context, schema)
-      raise "no such metadata schema: #{schema}" if schm.nil?
-      field = MetadataField.find_by_element(DSpace.context, schm.getSchemaID, element, qualifier)
-      raise "no such metadata field #{fully_qualified_metadata_field}" if field.nil?
-
-      sql = "SELECT MV.resource_id, MV.resource_type_id  FROM MetadataValue MV";
-      sql = sql + " where MV.metadata_field_id= #{field.getFieldID} "
-      if (not value_or_nil.nil?) then
-        sql = sql + " AND MV.text_value LIKE '#{value_or_nil}'"
-      end
-      if (restrict_to_type) then
-        sql = sql + " AND MV.resource_type_id = #{objTypeId(restrict_to_type)}"
-      end
-
-      tri = DatabaseManager.queryTable(DSpace.context, "MetadataValue",   sql)
-      dsos = [];
-      while (iter = tri.next())
-        dsos << self.find(iter.getIntColumn("resource_type_id"), iter.getIntColumn("resource_id") )
-      end
-      tri.close
-      return dsos
-    end
-
   def self.kernel
     @@config.kernel;
   end
 
-  def self.help( klasses = [ DSpace, DCommunity, DCollection, DItem, DGroup])
+  def self.help(klasses = [DSpace, DCommunity, DCollection, DItem, DGroup])
     klasses.each do |klass|
       klass.singleton_methods.sort.each do |mn|
         m = klass.method(mn)

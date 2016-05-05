@@ -16,6 +16,12 @@ class DItem
     return list
   end
 
+  def self.find(id)
+    java_import org.dspace.content.Item;
+    id = id.to_i if id.class == String
+    return Item.find(DSpace.context, id)
+  end
+
   def self.inside(restrict_to_dso)
     java_import org.dspace.storage.rdbms.DatabaseManager
     java_import org.dspace.storage.rdbms.TableRow

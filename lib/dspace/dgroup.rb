@@ -34,24 +34,20 @@ class DGroup
 
   def members
     list = [];
-    @dso.getMembers.each do |m|
+    @obj.getMembers.each do |m|
       list << m;
     end
-    @dso.getMemberGroups.each do |m|
+    @obj.getMemberGroups.each do |m|
       list << m;
     end
     return list;
   end
 
-  def addMember(addGrouNameOrNetid)
-    add = DGroup.find(addGrouNameOrNetid)
-    if (add.nil?) then
-        add = DEPerson.find(addGrouNameOrNetid);
-    end 
-    raise "no such netid or group #{addGrouNameOrNetid}" if add.nil?
-    @dso.addMember(add);
-    @dso.update
-    return @dso;
+  def addMember(group_or_eperson)
+    raise "must give non nil group_or_eperson" if group_or_eperson.nil?
+    @obj.addMember(group_or_eperson);
+    @obj.update
+    return @obj;
   end
 
   def report
