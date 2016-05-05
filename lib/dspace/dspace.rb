@@ -2,29 +2,18 @@ module DSpace
   ROOT = File.expand_path('../..', __FILE__)
   @@config = nil;
 
-  BITSTREAM = 0;
-  BUNDLE = 1;
-  ITEM = 2;
-  COLLECTION = 3;
-  COMMUNITY = 4;
-  SITE = 5;
-  GROUP = 6;
-  EPERSON = 7;
-
-  def self.objTypeId(type_str_or_int)
-    obj_typ = Constants.typeText.find_index type_str_or_int
-    if obj_typ.nil? then
-      obj_typ = Integer(type_str_or_int)
-      raise "no such object typ #{type_str_or_int}" unless Constants.typeText[obj_typ]
+  def self.objTypeStr(type_str_or_int)
+    return type_str_or_int.capitalize if type_str_or_int.class == String and Constants.typeText.find_index type_str_or_int.upcase
+    begin
+      id = Integer(type_str_or_int)
+    rescue
+      raise "no such object type #{type_str_or_int}"
     end
-    return obj_typ;
+    return Constants.typeText[id].capitalize
   end
 
-  def self.objTypeStr(type_str_or_int)
-    return type_str_or_int if Constants.typeText.find_index type_str_or_int
-    obj_typ_id = Integer(type_str_or_int)
-    raise "no such object type #{type_str_or_int}" unless Constants.typeText[obj_typ_id]
-    return Constants.typeText[obj_typ_id];
+  def self.objTypeId(type_str_or_int)
+    obj_typ = Constants.typeText.find_index objTypeStr(type_str_or_int).upcase
   end
 
   def self.load(dspace_dir = nil)
@@ -75,7 +64,7 @@ module DSpace
   def self.find(type_str_or_int, identifier)
     type_str = DSpace.objTypeStr(type_str_or_int)
     type_id = DSpace.objTypeId(type_str)
-    klass = Object.const_get "D" + type_str_or_int.capitalize
+    klass = Object.const_get "D" + type_str
     begin
       id = Integer(identifier)
     rescue
