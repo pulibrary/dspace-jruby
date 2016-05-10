@@ -2,6 +2,16 @@ module DSpace
   ROOT = File.expand_path('../..', __FILE__)
   @@config = nil;
 
+  BITSTREAM = 0;
+  BUNDLE = 1;
+  ITEM = 2;
+  COLLECTION = 3;
+  COMMUNITY = 4;
+  SITE = 5;
+  GROUP = 6;
+  EPERSON = 7;
+
+
   def self.objTypeStr(type_str_or_int)
     return type_str_or_int.capitalize if type_str_or_int.class == String and Constants.typeText.find_index type_str_or_int.upcase
     begin
