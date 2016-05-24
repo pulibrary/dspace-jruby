@@ -11,7 +11,6 @@ module DSpace
   GROUP = 6;
   EPERSON = 7;
 
-
   def self.objTypeStr(type_str_or_int)
     return type_str_or_int.capitalize if type_str_or_int.class == String and Constants.typeText.find_index type_str_or_int.upcase
     begin
@@ -33,11 +32,9 @@ module DSpace
       java_import org.dspace.handle.HandleManager;
       java_import org.dspace.core.Constants
       java_import org.dspace.content.DSpaceObject
-      return true
-    else
-      puts "Already loaded #{@@config.dspace_cfg}"
     end
-    return false
+    puts "DB #{DSpace.context.getDBConnection.toString}"
+    return @@config != nil
   end
 
   def self.context
@@ -83,6 +80,41 @@ module DSpace
     return klass.send :find, id
   end
 
+  def self.fromString(type_id_or_handle)
+    #TODO handle MetadataField string
+    splits = type_id_or_handle.split('.')
+    if (2 == splits.length) then
+      self.find(splits[0].upcase, splits[1])
+    else
+      self.fromHandle(type_id_or_handle)
+    end
+  end
+
+  def self.toString(java_obj)
+    return "nil" unless java_obj
+    klass = java_obj.getClass.getName
+    if (klass == "org.dspace.content.MetadataField") then
+      java_import org.dspace.content.MetadataField
+      java_import org.dspace.content.MetadataSchema
+
+      schema = MetadataSchema.find(DSpace.context, java_obj.schemaID)
+      str = "#{schema.getName}.#{java_obj.element}"
+      str += ".#{java_obj.qualifier}" if java_obj.qualifier
+      str
+    else
+      java_obj.toString
+    end
+  end
+
+  def self.getService(service_name, java_klass)
+    org.dspace.utils.DSpace.new().getServiceManager().getServiceByName(service_name,java_klass)
+  end
+
+  def self.getIndexService()
+    java_import org.dspace.discovery.SolrServiceImpl;
+    self.getService("org.dspace.discovery.IndexingService", SolrServiceImpl)
+  end
+
   def self.findByMetadataValue(fully_qualified_metadata_field, value_or_nil, restrict_to_type)
     java_import org.dspace.content.MetadataSchema
     java_import org.dspace.content.MetadataField
@@ -111,32 +143,6 @@ module DSpace
     end
     tri.close
     return dsos
-  end
-
-  def self.fromString(type_id_or_handle)
-    #TODO handle MetadataField string
-    splits = type_id_or_handle.split('.')
-    if (2 == splits.length) then
-      self.find(splits[0].upcase, splits[1])
-    else
-      self.fromHandle(type_id_or_handle)
-    end
-  end
-
-  def self.toString(java_obj)
-    return "nil" unless java_obj
-    klass = java_obj.getClass.getName
-    if (klass == "org.dspace.content.MetadataField") then
-      java_import org.dspace.content.MetadataField
-      java_import org.dspace.content.MetadataSchema
-
-      schema = MetadataSchema.find(DSpace.context, java_obj.schemaID)
-      str = "#{schema.getName}.#{java_obj.element}"
-      str += ".#{java_obj.qualifier}" if java_obj.qualifier
-      str
-    else
-      java_obj.toString
-    end
   end
 
   def self.kernel
