@@ -1,11 +1,17 @@
+##
+# This class wraps an org.dspace.content.Item object
 class DItem
   include DSO;
 
+  ##
+  # return org.dspace.content.ItemIterator for all Items
   def self.iter
     java_import org.dspace.content.Item;
     Item.findAll(DSpace.context);
   end
 
+  ##
+  # return array of all org.dspace.content.Item objects
   def self.all
     java_import org.dspace.content.Item;
     list = []
@@ -16,12 +22,17 @@ class DItem
     return list
   end
 
+  ##
+  # returns nil or the org.dspace.content.Item object with the given id
+  # id:: must be an integer
   def self.find(id)
     java_import org.dspace.content.Item;
-    id = id.to_i if id.class == String
     return Item.find(DSpace.context, id)
   end
 
+  ##
+  # returns [] if restrict_to_dso is nil or all items that are contained in the given restrict_to_dso
+  # restrict_to_dso:: must be nil, or an instance of org.dspace.content.Item, Collection, or Community
   def self.inside(restrict_to_dso)
     java_import org.dspace.storage.rdbms.DatabaseManager
     java_import org.dspace.storage.rdbms.TableRow
@@ -49,6 +60,8 @@ class DItem
     return dsos
   end
 
+  ##
+  # returns the bitstreams in the given bundle
   def bitstreams(bundle = "ORIGINAL")
     bundle = @obj.getBundles.select { |b| b.getName() == bundle }[0]
     if (not bundle.nil?) then
@@ -57,6 +70,9 @@ class DItem
     return [];
   end
 
+  ##
+  # creata a org.dspace.content.Item with the given metadata in the given collection
+  # metadata_hash:: use keys like dc.contributir.author and single string or arrays of values
   def self.install(collection, metadata_hash)
     java_import org.dspace.content.InstallItem;
     java_import org.dspace.content.WorkspaceItem;

@@ -1,11 +1,31 @@
+##
+# This class wraps an org.dspace.eperson.EPerson object
 class DEPerson
   include DSO
 
+  ##
+  # return array of all org.dspace.eperson.EPerson objects
   def self.all()
     java_import org.dspace.eperson.EPerson;
     return EPerson.findAll(DSpace.context, 1)
   end
 
+  ##
+  # returns nil or the org.dspace.eperson.EPerson object with the given netid, email, or id
+  # netid_or_email: must be a string or integer
+  def self.find(netid_email_or_id)
+    java_import org.dspace.eperson.EPerson;
+    raise "must give a netid_or_email value" unless netid_email_or_id
+    if netid_email_or_id.is_a? String then
+      return EPerson.findByNetid(DSpace.context, netid_email_or_id) || EPerson.findByEmail(DSpace.context, netid_email_or_id)
+    end
+    return EPerson.find(DSpace.context, netid_email_or_id)
+  end
+
+  ##
+  # create an org.dspace.eperson.EPerson with the given netid, name and email
+  #
+  # the EPerson is not committed to the database
   def self.create(netid, first, last, email)
     java_import org.dspace.eperson.EPerson;
     raise "must give a netid value" unless netid
@@ -24,19 +44,17 @@ class DEPerson
     return @dso;
   end
 
-  def self.find(netid_or_email)
-    java_import org.dspace.eperson.EPerson;
-    raise "must give a netid_or_email value" unless netid_or_email
-    return EPerson.findByNetid(DSpace.context, netid_or_email) || EPerson.findByEmail(DSpace.context, netid_or_email)
-  end
-
+  ##
+  # return all groups where this user is a member
   def groups
     java_import org.dspace.eperson.Group;
     return Group.allMemberGroups(DSpace.context, @obj);
   end
 
-  def group_names
-    groups.collect { |g| g.getName}.sort
+  ##
+  # convert to string
+  def inspect
+    describe = @obj.getNetid || @obj.getEmail || @obj.getID
+    return "EPERSON.#{describe}"
   end
-
 end

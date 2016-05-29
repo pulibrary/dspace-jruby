@@ -1,30 +1,21 @@
+##
+# This class wraps an org.dspace.content.Community object
 class DCommunity
   include DSO
 
+  ##
+  # return array of all org.dspace.content.Community objects
   def self.all()
     java_import org.dspace.content.Community;
     return Community.findAll(DSpace.context)
   end
 
+  ##
+  # returns nil or the org.dspace.content.Community object with the given id
+  # id:: must be an integer
   def self.find(id)
     java_import org.dspace.content.Community;
     return Community.find(DSpace.context, id)
-  end
-
-  def self.findAll(name)
-    java_import org.dspace.content.Community;
-    self.all.select do |c|
-      c.getName == name
-    end
-  end
-
-  def report
-    rpt = dso_report
-    list =  @obj.getSubcommunities.collect {|sc| DCommunity.new(sc).report }
-    rpt[:subcomunities] = list unless list.empty?
-    list =  @obj.getCollections.collect {|sc| DCollection.new(sc).report }
-    rpt[:collections] = list unless list.empty?
-    return rpt;
   end
 
 end

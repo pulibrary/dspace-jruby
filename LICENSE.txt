@@ -1,4 +1,4 @@
-Copyright (c) 2014 Jacob Brown
+Copyright (c) 2016 Monika Mevenkamp
 
 MIT License
 

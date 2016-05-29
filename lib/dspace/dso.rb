@@ -1,7 +1,14 @@
+##
+# This module contains methods to be included by classes that wrap objects 
+# that derive from org.dspace.content.DSpaceObject 
 require 'json'
 
 module DSO
 
+  ## 
+  # instanciates a wrapper object for the given dobj, which must derive from org.dspace.content.DSpaceObject
+  # 
+  # the wrapper object's class must be compatible with the type of the given dobj 
   def initialize(dobj)
     raise "must pass non null obj" unless dobj
     type = DSpace.const_get self.class.name[1..-1].upcase
@@ -21,23 +28,6 @@ module DSO
       p = p.getParentObject();
     end
     return moms;
-  end
-
-  def dso_report
-    rpt = {};
-    rpt[:name] = @obj.getName
-    rpt[:obj] = @obj.toString()
-    if (@obj.getHandle()) then
-      rpt[:handle] = @obj.getHandle()
-    end
-    if (@obj.getParentObject()) then
-      rpt[:parent] = @obj.getParentObject().to_s
-    end
-    return rpt;
-  end
-
-  def report
-    dso_report
   end
 
   def policies()
@@ -70,5 +60,11 @@ module DSO
     tri.close
     return mvs
   end
+
+  def inspect
+    return "nil" if @obj.nil?
+    return "#{@obj.getTypeText}.#{@obj.getID}"
+  end
+
 end
 

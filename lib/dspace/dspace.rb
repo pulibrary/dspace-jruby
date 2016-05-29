@@ -2,6 +2,8 @@ module DSpace
   ROOT = File.expand_path('../..', __FILE__)
   @@config = nil;
 
+  ##
+  # constants corresponding to those defined in org.dspace.core.Constants
   BITSTREAM = 0;
   BUNDLE = 1;
   ITEM = 2;
@@ -11,20 +13,33 @@ module DSpace
   GROUP = 6;
   EPERSON = 7;
 
+  ##
+  # return the name of the wrapper klass that corresponds to the give parameter
+  # type_str_or_int:: one of the integer values: BITTREAM .. EPERSON, or the corresponding string
   def self.objTypeStr(type_str_or_int)
-    return type_str_or_int.capitalize if type_str_or_int.class == String and Constants.typeText.find_index type_str_or_int.upcase
-    begin
-      id = Integer(type_str_or_int)
-    rescue
-      raise "no such object type #{type_str_or_int}"
+    if type_str_or_int.class == String and Constants.typeText.find_index type_str_or_int.upcase then
+      klassName = type_str_or_int.capitalize
+    else
+      begin
+        id = Integer(type_str_or_int)
+      rescue
+        raise "no such object type #{type_str_or_int}"
+      end
+      klassName = Constants.typeText[id].capitalize
     end
-    return Constants.typeText[id].capitalize
+    return "EPerson" if klassName == "Eperson"
+    return klassName
   end
 
+  ##
+  # convert string to corresponding constant: BITSTREAM, BUNDLE, ...
   def self.objTypeId(type_str_or_int)
     obj_typ = Constants.typeText.find_index objTypeStr(type_str_or_int).upcase
   end
 
+  ##
+  # load DSpace configurations and jar files from the dspace_dir directory;
+  # if dspace_dir is nil use the value of the environment variable 'DSPACE_HOME' or if undefined as well default to '/dspace'
   def self.load(dspace_dir = nil)
     if (@@config.nil?) then
       @@config = Config.new(dspace_dir || ENV['DSPACE_HOME'] || "/dspace")
@@ -37,37 +52,62 @@ module DSpace
     return @@config != nil
   end
 
+  ##
+  # return the current org.dspace.core.Context
+  #
+  # this method fails unless it is preceded by a successfull DSPace.load call
   def self.context
     raise "must call load to initialize" if @@config.nil?
     raise "should never happen" if @@config.context.nil?
     return @@config.context
   end
 
+  ##
+  # renew  the current org.dspace.core.Context; this abandons any uncommited database changes
   def self.context_renew
     raise "must call load to initialize" if @@config.nil?
     raise "should never happen" if @@config.context.nil?
     return @@config.context_renew
   end
 
+  ##
+  # set the current dspace user to the one with the given netid
   def self.login(netid)
     self.context.setCurrentUser(DEPerson.find(netid))
     return nil
   end
 
+  ##
+  # commit changes to the database
   def self.commit
     self.context.commit
   end
 
+  ##
+  # commit a wrapper object for the given java object;
+  # the type of the warpper is determined by the class of the given java object
+  #
   def self.create(dso)
     raise "dso must not be nil" if dso.nil?
     klass = Object.const_get "D" + dso.class.name.gsub(/.*::/, '')
     klass.send :new, dso
   end
 
+  ##
+  # return nil or the org.dspace.content.DSpaceObject for the given handle
   def self.fromHandle(handle)
     return HandleManager.resolve_to_object(DSpace.context, handle);
   end
 
+  ##
+  # return the DSpace object that is identified by the given type and identifier
+  # type_str_or_int:: one of the integer values: BITTREAM, .. EPERSON, or the corresponding string
+  # identifier:: integer or string value uniquely identifying the object
+  #
+  #     DSpace.find(DSpace::COLLECTION, 106)
+  #     DSpace.find("ITEM", 10)
+  #     DSpace.find("GROUP", "Anonymous")
+  #     DSpace.find("EPERSON", "her@there.com")
   def self.find(type_str_or_int, identifier)
     type_str = DSpace.objTypeStr(type_str_or_int)
     type_id = DSpace.objTypeId(type_str)
@@ -82,7 +122,7 @@ module DSpace
 
   def self.fromString(type_id_or_handle)
     #TODO handle MetadataField string
-    splits = type_id_or_handle.split('.')
+    splits = type_id_or_handle.split('.', 2)
     if (2 == splits.length) then
       self.find(splits[0].upcase, splits[1])
     else
@@ -92,39 +132,38 @@ module DSpace
 
   def self.toString(java_obj)
     return "nil" unless java_obj
-    klass = java_obj.getClass.getName
-    if (klass == "org.dspace.content.MetadataField") then
-      java_import org.dspace.content.MetadataField
-      java_import org.dspace.content.MetadataSchema
-
-      schema = MetadataSchema.find(DSpace.context, java_obj.schemaID)
-      str = "#{schema.getName}.#{java_obj.element}"
-      str += ".#{java_obj.qualifier}" if java_obj.qualifier
-      str
-    else
-      java_obj.toString
+    begin
+      DSpace.create(java_obj).to_s
+    rescue
+      return java_obj.toString
     end
   end
 
+  ##
+  # get a dspace service by name
   def self.getService(service_name, java_klass)
     org.dspace.utils.DSpace.new().getServiceManager().getServiceByName(service_name,java_klass)
   end
 
+  ##
+  # get the SoltServiveImpl
   def self.getIndexService()
     java_import org.dspace.discovery.SolrServiceImpl;
     self.getService("org.dspace.discovery.IndexingService", SolrServiceImpl)
   end
 
-  def self.findByMetadataValue(fully_qualified_metadata_field, value_or_nil, restrict_to_type)
-    java_import org.dspace.content.MetadataSchema
-    java_import org.dspace.content.MetadataField
-    java_import org.dspace.storage.rdbms.DatabaseManager
-    java_import org.dspace.storage.rdbms.TableRow
+  ##
+  # if value_or_nil is nil and restrict_to_type is nil return all DSpaceObjects have a value for the
+  # given metadata field
+  #
+  # if value_or_nil is not nil restrict to those whose value is equal to the given paramter
+  #
+  # if restrict_to_typ is not nil, restrict to results of the given type
+  #
+  # restrict_to_type:: must be one of BITSTREAM, .., EPERSON
 
-    (schema, element, qualifier) = fully_qualified_metadata_field.split('.')
-    schm = MetadataSchema.find(DSpace.context, schema)
-    raise "no such metadata schema: #{schema}" if schm.nil?
-    field = MetadataField.find_by_element(DSpace.context, schm.getSchemaID, element, qualifier)
+  def self.findByMetadataValue(fully_qualified_metadata_field, value_or_nil, restrict_to_type)
+    field = DMetadataField.find(fully_qualified_metadata_field)
     raise "no such metadata field #{fully_qualified_metadata_field}" if field.nil?
 
     sql = "SELECT MV.resource_id, MV.resource_type_id  FROM MetadataValue MV";
@@ -145,11 +184,9 @@ module DSpace
     return dsos
   end
 
-  def self.kernel
-    @@config.kernel;
-  end
-
-  def self.help(klasses = [DSpace, DCommunity, DCollection, DItem, DGroup])
+  ##
+  # print available static methods for the give classes
+  def self.help(klasses = [DSpace, DCommunity, DCollection, DItem, DGroup, DWorkflowItem, DWorkspaceItem, DMetadataField])
     klasses.each do |klass|
       klass.singleton_methods.sort.each do |mn|
         m = klass.method(mn)

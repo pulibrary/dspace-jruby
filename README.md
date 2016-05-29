@@ -18,6 +18,7 @@ The companion project [cli-dspace](https://github.com/akinom/dspace-cli)  contai
 ### Installation 
 
 Add the gem to your projects Gemfile: 
+
 ```
 gem 'jrdspace'      # pull from rubygems 
 
@@ -26,11 +27,14 @@ gem 'jrdspace', :git => 'https://github.com/akinom/dspace-jruby', :branch => 'ma
 ```
 
 Install the gem:
+
 ```
 bundle install
 ```
 
-Please note that I am still updating this gem ferquently as I discover bugs. So please keep do update frequently with 
+Please note that I am still updating this gem frequently as I discover bugs.
+So please update frequently with 
+
 ```
 bundle update
 ```
@@ -38,6 +42,7 @@ bundle update
 ##  Usage 
 
 To use in scripts simply include the following 
+
 ```
 require 'dspace' 
 DSpace.load(dspace_install_dir) 
@@ -66,13 +71,20 @@ DSpace.load("/home/you/installs/dspace")     # load from /home/you/installs/dspa
 ```
 
 The load method sets the environment up by reading configurations from the dspace.cfg file and by requiring all jar files from the ${dspace.dir}/lib directory.  After a succesfull load you can start using Java classes by importing them, for example: 
+
 ```
  java_import org.dspace.content.Item;
 ``` 
-The included classes DSpace, DCommunity, DCollection, ... from [lib/dspace](lib/dspace) provide convenience methods, such as retrieving all Communities  or the Group with a given name: 
+The included classes DSpace, DCommunity, DCollection, ... from [lib/dspace](lib/dspace) 
+provide convenience methods, such as retrieving all Communities  finding individual objects: 
+
 ```
 DCommunity.all
-DSpace.fromString('GROUP.name')
+DSpace.fromString ('some/handle')      
+DSpace.fromString ('ITEM.124')      
+DSpace.fromString ('EPERSON.a_netid')   
+DSpace.fromString ('GROUP.Anonymous')      
+DGroup.find('group_name')
 ```
 
 If you want to make changes you can 'login' 
@@ -88,26 +100,15 @@ Remember to call the commit method if you want to save changes
 DSpace.commit 
 ```
 
-
-Find Dspace stuff:
-
-```
-DSpace.fromHandle ('xxxxx/yyy')      
-DSpace.fromString ('ITEM.124')      
-DSpace.fromString ('GROUP.Anonymous')      
-DSpace.fromString ('EPERSON.a_netid')   
-DCommunity.all 
-DGroup.find('group_name')
-```
-These methods use the relevant Java classes to locate the objects and return nil or a reference to the Java object found. All public Java methods can be called on returned references. 
-
 The following prints a rudimentary community report:
+
 ```
 DCommunity.all.each { |c| puts [c.getCollections.length, c.getHandle, c.getName].join("\t") }
 ```
 
 Java objects can be converted to corresponding jrdspace objects, so that the additional functionality implemented by jrdspace classes becomes available. 
-For example all jrdspace objects implement the parents and policies method:
+For example all jrdspace objects derived from DSpaceObjects implement the parents and policies method:
+
 ```
 dso = DSpace.fromHandle('xxxxx/zzz') 
 DSpace.create(dso).parents
