@@ -12,7 +12,8 @@ class DCollection
 
   ##
   # returns nil or the org.dspace.content.Collection object with the given id
-  # id:: must be an integer
+  #
+  # id must be an integer
   def self.find(id)
     java_import org.dspace.content.Collection;
     return Collection.find(DSpace.context, id)

@@ -10,7 +10,8 @@ class DMetadataField
 
   ##
   # returns nil or the org.dspace.content.MetadataField object with the given field_name
-  # field_name:: must be an string foemmated as   schema.element[.qualifier]
+  #
+  # field_name must be a formmatted  string: schema.element[.qualifier]
   def self.find(fully_qualified_metadata_field)
     java_import org.dspace.content.MetadataSchema
     java_import org.dspace.content.MetadataField

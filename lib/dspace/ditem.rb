@@ -24,7 +24,8 @@ class DItem
 
   ##
   # returns nil or the org.dspace.content.Item object with the given id
-  # id:: must be an integer
+  #
+  # id must be an integer
   def self.find(id)
     java_import org.dspace.content.Item;
     return Item.find(DSpace.context, id)
@@ -32,7 +33,8 @@ class DItem
 
   ##
   # returns [] if restrict_to_dso is nil or all items that are contained in the given restrict_to_dso
-  # restrict_to_dso:: must be nil, or an instance of org.dspace.content.Item, Collection, or Community
+  #
+  # restrict_to_dso must be nil, or an instance of org.dspace.content.Item, Collection, or Community
   def self.inside(restrict_to_dso)
     java_import org.dspace.storage.rdbms.DatabaseManager
     java_import org.dspace.storage.rdbms.TableRow
@@ -72,7 +74,8 @@ class DItem
 
   ##
   # creata a org.dspace.content.Item with the given metadata in the given collection
-  # metadata_hash:: use keys like dc.contributir.author and single string or arrays of values
+  #
+  # metadata_hash use keys like dc.contributir.author and single string or arrays of values
   def self.install(collection, metadata_hash)
     java_import org.dspace.content.InstallItem;
     java_import org.dspace.content.WorkspaceItem;

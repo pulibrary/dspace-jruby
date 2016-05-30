@@ -12,7 +12,8 @@ class DCommunity
 
   ##
   # returns nil or the org.dspace.content.Community object with the given id
-  # id:: must be an integer
+  #
+  # id must be an integer
   def self.find(id)
     java_import org.dspace.content.Community;
     return Community.find(DSpace.context, id)

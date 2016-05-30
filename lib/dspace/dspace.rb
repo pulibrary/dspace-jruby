@@ -15,7 +15,8 @@ module DSpace
 
   ##
   # return the name of the wrapper klass that corresponds to the give parameter
-  # type_str_or_int:: one of the integer values: BITTREAM .. EPERSON, or the corresponding string
+  #
+  # type_str_or_int must be oe of the integer values: BITTREAM .. EPERSON, or the corresponding string
   def self.objTypeStr(type_str_or_int)
     if type_str_or_int.class == String and Constants.typeText.find_index type_str_or_int.upcase then
       klassName = type_str_or_int.capitalize
@@ -101,8 +102,10 @@ module DSpace
 
   ##
   # return the DSpace object that is identified by the given type and identifier
-  # type_str_or_int:: one of the integer values: BITTREAM, .. EPERSON, or the corresponding string
-  # identifier:: integer or string value uniquely identifying the object
+  #
+  # type_str_or_int must be oe of the integer values: BITTREAM .. EPERSON, or the corresponding string
+  #
+  # identifier must be an integer or string value uniquely identifying the object
   #
   #     DSpace.find(DSpace::COLLECTION, 106)
   #     DSpace.find("ITEM", 10)
@@ -160,7 +163,7 @@ module DSpace
   #
   # if restrict_to_typ is not nil, restrict to results of the given type
   #
-  # restrict_to_type:: must be one of BITSTREAM, .., EPERSON
+  # restrict_to_type must be one of BITSTREAM, .., EPERSON
 
   def self.findByMetadataValue(fully_qualified_metadata_field, value_or_nil, restrict_to_type)
     field = DMetadataField.find(fully_qualified_metadata_field)

@@ -32,7 +32,8 @@ class DGroup
 
   ##
   # find and return the existing group with the given name or create and return a new group with the given name
-  # name:: must be a string
+  #
+  # name must be a string
   def self.find_or_create(name)
     raise "must give a name " unless name
     group = self.find(name);
@@ -49,14 +50,16 @@ class DGroup
 
   ##
   # return EPerson and Groups that are (direct) require 'faker;members of this DGroup
-  # name:: must be a string
+  #
+  # name must be a string
   def members
     return @obj.getMembers + @obj.getMemberGroups
   end
 
   ##
   # add a memeber to the group
-  # group_or_eperson:: must be a org.dspace.eperson.EPerson or Group object
+  #
+  # group_or_eperson must be a org.dspace.eperson.EPerson or Group object
   def addMember(group_or_eperson)
     raise "must give non nil group_or_eperson" if group_or_eperson.nil?
     @obj.addMember(group_or_eperson);

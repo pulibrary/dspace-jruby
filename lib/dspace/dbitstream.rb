@@ -12,7 +12,8 @@ class DBitstream
 
   ##
   # returns nil or the org.dspace.content.Bitstream object with the given id
-  # id:: must be an integer
+  #
+  # id must be an integer
   def self.find(id)
     java_import org.dspace.content.Bitstream;
     return Bitstream.find(DSpace.context, id)
