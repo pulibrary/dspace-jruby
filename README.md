@@ -8,6 +8,8 @@ jrdspace contains an interactive console and therefore enables quick experimenta
 
 The companion project [cli-dspace](https://github.com/akinom/dspace-cli)  contains utilities that make use of jrdspace.
 
+Documentation is also available at [ruvydoc.info][http://www.rubydoc.info/github/akinom/dspace-jruby]
+
 ## Installation
 
 ### Prerequisite
