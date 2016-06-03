@@ -12,10 +12,9 @@ class DItem
 
   ##
   # return array of all org.dspace.content.Item objects
-  def self.all
+  def self.all()
     java_import org.dspace.content.Item;
-    list = []
-    stp = iter
+    list, stp = [], iter
     while (i = stp.next)
       list << i
     end
@@ -65,11 +64,12 @@ class DItem
   ##
   # returns the bitstreams in the given bundle
   def bitstreams(bundle = "ORIGINAL")
-    bundle = @obj.getBundles.select { |b| b.getName() == bundle }[0]
-    if (not bundle.nil?) then
-      return bundle.getBitstreams
+    bundles = bundle.nil? ? @obj.getBundles : @obj.getBundles(bundle)
+    bits = []
+    bundles.each do |b|
+      bits += b.getBitstreams
     end
-    return [];
+    bits
   end
 
   ##

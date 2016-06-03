@@ -24,6 +24,8 @@ module DWork
       wi = klass.findByItem(DSpace.context, obj)
       # to be consistent return array with the unqiue wokflow item
       return [wi] if wi
+    elsif (obj.getType == DSpace::EPERSON) then
+      wi = klass.findByEPerson(DSpace.context, obj)
     end
     # return empty array if no matching workspace items
     return []
@@ -32,6 +34,16 @@ module DWork
 end
 
 class DWorkflowItem
+
+  ##
+  # find org.dspace.workflow.WorkflowItem
+  #
+  # id must be an integer
+  def self.find(id)
+    java_import org.dspace.workflow.WorkflowItem
+    return WorkflowItem.find(DSpace.context, id)
+  end
+
 
   ##
   # returns all instances of org.dspace.workflow.WorkflowItem if the obj parameter is nil, otherwise
@@ -46,10 +58,19 @@ end
 class DWorkspaceItem
 
   ##
+  # find org.dspace.workflow.WorkspaceItem
+  #
+  # id must be an integer
+  def self.find(id)
+    java_import org.dspace.content.WorkspaceItem
+    return WorkspaceItem.find(DSpace.context, id)
+  end
+
+  ##
   # returns all instances of org.dspace.workflow.WorkspaceItem if the obj parameter is nil, otherwise
   # all instances of org.dspace.workflow.WorkspaceItem associated with the the given obj
   def self.findAll(obj)
-    java_import org.dspace.workflow.WorkspaceItem
+    java_import org.dspace.content.WorkspaceItem
     return DWork.findAll(obj, WorkspaceItem)
   end
 

@@ -19,4 +19,13 @@ class DCommunity
     return Community.find(DSpace.context, id)
   end
 
+  ##
+  #  create and return org.dspace.content.Community with given name
+  def self.create(name)
+    comm = Community.create(nil, DSpace.context)
+    comm.setMetadata("name", name)
+    comm.update
+    return comm
+  end
+
 end
