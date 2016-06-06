@@ -11,7 +11,7 @@ module DSO
   # the wrapper object's class must be compatible with the type of the given dobj 
   def initialize(dobj)
     raise "must pass non null obj" unless dobj
-    type = DSpace.const_get self.class.name[1..-1].upcase
+    type = DConstants.const_get self.class.name[1..-1].upcase
     @obj = dobj
     raise "#{dobj} is not a #{type} object" unless @obj.getType == type
   end

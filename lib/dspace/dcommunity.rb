@@ -20,7 +20,7 @@ class DCommunity
   end
 
   ##
-  #  create and return org.dspace.content.Community with given name
+  #  create and return top level org.dspace.content.Community with given name
   def self.create(name)
     comm = Community.create(nil, DSpace.context)
     comm.setMetadata("name", name)

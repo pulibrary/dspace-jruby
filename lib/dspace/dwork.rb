@@ -12,19 +12,19 @@ module DWork
     if (obj.nil?) then
       return klass.findAll(DSpace.context)
     end
-    if (obj.getType == DSpace::COLLECTION)
+    if (obj.getType == DConstants::COLLECTION)
       return klass.findByCollection(DSpace.context, obj)
-    elsif (obj.getType == DSpace::COMMUNITY) then
+    elsif (obj.getType == DConstants::COMMUNITY) then
       wsis = []
       obj.getAllCollections.each do |col|
         wsis += findAll(col)
       end
       return wsis
-    elsif (obj.getType == DSpace::ITEM) then
+    elsif (obj.getType == DConstants::ITEM) then
       wi = klass.findByItem(DSpace.context, obj)
       # to be consistent return array with the unqiue wokflow item
       return [wi] if wi
-    elsif (obj.getType == DSpace::EPERSON) then
+    elsif (obj.getType == DConstants::EPERSON) then
       wi = klass.findByEPerson(DSpace.context, obj)
     end
     # return empty array if no matching workspace items

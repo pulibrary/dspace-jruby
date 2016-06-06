@@ -2,16 +2,6 @@ module DSpace
   ROOT = File.expand_path('../..', __FILE__)
   @@config = nil;
 
-  ##
-  # constants corresponding to those defined in org.dspace.core.Constants
-  BITSTREAM = 0;
-  BUNDLE = 1;
-  ITEM = 2;
-  COLLECTION = 3;
-  COMMUNITY = 4;
-  SITE = 5;
-  GROUP = 6;
-  EPERSON = 7;
 
   ##
   # return the name of the wrapper klass that corresponds to the give parameter
@@ -26,7 +16,7 @@ module DSpace
       rescue
         raise "no such object type #{type_str_or_int}"
       end
-      klassName = Constants.typeText[id].capitalize
+      klassName = DConstants.typeStr(id)
     end
     return "EPerson" if klassName == "Eperson"
     return klassName
@@ -95,12 +85,6 @@ module DSpace
   end
 
   ##
-  # return nil or the org.dspace.content.DSpaceObject for the given handle
-  def self.fromHandle(handle)
-    return HandleManager.resolve_to_object(DSpace.context, handle);
-  end
-
-  ##
   # return the DSpace object that is identified by the given type and identifier
   #
   # type_str_or_int must be oe of the integer values: BITTREAM .. EPERSON, or the corresponding string
@@ -129,16 +113,7 @@ module DSpace
     if (2 == splits.length) then
       self.find(splits[0].upcase, splits[1])
     else
-      self.fromHandle(type_id_or_handle)
-    end
-  end
-
-  def self.toString(java_obj)
-    return "nil" unless java_obj
-    begin
-      DSpace.create(java_obj).to_s
-    rescue
-      return java_obj.toString
+      return HandleManager.resolve_to_object(DSpace.context, type_id_or_handle);
     end
   end
 
@@ -166,6 +141,7 @@ module DSpace
   # restrict_to_type must be one of BITSTREAM, .., EPERSON
 
   def self.findByMetadataValue(fully_qualified_metadata_field, value_or_nil, restrict_to_type)
+    java_import org.dspace.storage.rdbms.DatabaseManager
     field = DMetadataField.find(fully_qualified_metadata_field)
     raise "no such metadata field #{fully_qualified_metadata_field}" if field.nil?
 
@@ -189,7 +165,8 @@ module DSpace
 
   ##
   # print available static methods for the give classes
-  def self.help(klasses = [DSpace, DCommunity, DCollection, DItem, DGroup, DWorkflowItem, DWorkspaceItem, DMetadataField])
+  def self.help(klasses = [DCommunity, DCollection, DItem, DBundle, DBitstream, DEPerson,
+                           DWorkflowItem, DWorkspaceItem, DMetadataField, DConstants, DSpace])
     klasses.each do |klass|
       klass.singleton_methods.sort.each do |mn|
         m = klass.method(mn)

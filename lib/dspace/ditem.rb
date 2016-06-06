@@ -39,11 +39,11 @@ class DItem
     java_import org.dspace.storage.rdbms.TableRow
 
     return [] if restrict_to_dso.nil?
-    return [restrict_to_dso] if restrict_to_dso.getType == DSpace::ITEM
-    return [] if restrict_to_dso.getType != DSpace::COLLECTION and restrict_to_dso.getType != DSpace::COMMUNITY
+    return [restrict_to_dso] if restrict_to_dso.getType == DConstants::ITEM
+    return [] if restrict_to_dso.getType != DConstants::COLLECTION and restrict_to_dso.getType != DConstants::COMMUNITY
 
     sql = "SELECT ITEM_ID FROM ";
-    if (restrict_to_dso.getType() == DSpace::COLLECTION) then
+    if (restrict_to_dso.getType() == DConstants::COLLECTION) then
       sql = sql + "  Collection2Item CO WHERE  CO.Collection_Id = #{restrict_to_dso.getID}"
     else
       # must be COMMUNITY
