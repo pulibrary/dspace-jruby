@@ -2,6 +2,7 @@
 # This class wraps an org.dspace.content.Bitstream object
 class DBundle
   include DSO
+  include DDSpaceObject
 
   ##
   # returns nil or the org.dspace.content.Bundle object with the given id

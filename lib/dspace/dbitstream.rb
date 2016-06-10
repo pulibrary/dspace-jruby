@@ -2,6 +2,7 @@
 # This class wraps an org.dspace.content.Bitstream object
 class DBitstream
   include DSO
+  include DDSpaceObject
 
   ##
   # return array of all org.dspace.content.Bitstream objects

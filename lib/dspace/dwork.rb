@@ -34,6 +34,7 @@ module DWork
 end
 
 class DWorkflowItem
+  include DSO
 
   ##
   # find org.dspace.workflow.WorkflowItem
@@ -56,6 +57,7 @@ class DWorkflowItem
 end
 
 class DWorkspaceItem
+  include DSO
 
   ##
   # find org.dspace.workflow.WorkspaceItem

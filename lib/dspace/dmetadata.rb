@@ -1,12 +1,5 @@
 class DMetadataField
-
-  ##
-  # instantiate a wrapper for the given org.dspace.content.MetadataField
-  def initialize(dobj)
-    raise "must pass non null obj" unless dobj
-    raise "must pass org.dspace.content.MetadataField obj" unless dobj.instance_of? org.dspace.content.MetadataField
-    @obj = dobj
-  end
+  include DSO
 
   ##
   # returns nil or the org.dspace.content.MetadataField object with the given field_name
@@ -25,11 +18,12 @@ class DMetadataField
   end
 
   def inspect
+    return "nil" if @obj.nil?
     java_import org.dspace.content.MetadataSchema
     schema = MetadataSchema.find(DSpace.context, @obj.schemaID)
     str = "#{schema.getName}.#{@obj.element}"
     str += ".#{@obj.qualifier}" if @obj.qualifier
-    return str
+    return "#<#{self.class.name}:#{str}>"
   end
 
 end

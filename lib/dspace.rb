@@ -1,6 +1,7 @@
 require 'dspace/dspace'
 require 'dspace/dconstants'
 require 'dspace/dso'
+require 'dspace/ddspaceobject'
 require 'dspace/deperson'
 require 'dspace/dgroup'
 require 'dspace/dcollection'

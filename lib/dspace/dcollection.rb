@@ -2,6 +2,7 @@
 # This class wraps an org.dspace.content.Collection object
 class DCollection
   include DSO
+  include DDSpaceObject
 
   ##
   # return array of all org.dspace.content.Collection objects

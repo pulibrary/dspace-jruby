@@ -2,6 +2,7 @@
 # This class wraps an org.dspace.content.Item object
 class DItem
   include DSO;
+  include DDSpaceObject
 
   ##
   # return org.dspace.content.ItemIterator for all Items

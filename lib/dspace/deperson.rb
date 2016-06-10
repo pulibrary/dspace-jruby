@@ -2,6 +2,7 @@
 # This class wraps an org.dspace.eperson.EPerson object
 class DEPerson
   include DSO
+  include DDSpaceObject
 
   ##
   # return array of all org.dspace.eperson.EPerson objects
@@ -54,7 +55,8 @@ class DEPerson
   ##
   # convert to string
   def inspect
+    return "nil" if @obj.nil?
     describe = @obj.getNetid || @obj.getEmail || @obj.getID
-    return "EPERSON.#{describe}"
+    return "#<#{self.class.name}:#{describe}>"
   end
 end

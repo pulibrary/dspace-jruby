@@ -2,6 +2,7 @@
 # This class wraps an org.dspace.eperson.Group object
 class DGroup
   include DSO
+  include DDSpaceObject
 
   ##
   # id of administrator group
@@ -70,6 +71,6 @@ class DGroup
   ##
   # convert to string
   def inspect
-    return "GROUP.#{@obj.getName}"
-  end
+    return "nil" if @obj.nil?
+    return "#<#{self.class.name}:#{@obj.getName}>"  end
 end

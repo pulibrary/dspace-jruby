@@ -2,6 +2,7 @@
 # This class wraps an org.dspace.content.Community object
 class DCommunity
   include DSO
+  include DDSpaceObject
 
   ##
   # return array of all org.dspace.content.Community objects
