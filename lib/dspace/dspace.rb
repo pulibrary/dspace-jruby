@@ -113,6 +113,7 @@ module DSpace
     if (2 == splits.length) then
       self.find(splits[0].upcase, splits[1])
     else
+      java_import org.dspace.handle.HandleManager
       return HandleManager.resolve_to_object(DSpace.context, type_id_or_handle);
     end
   end
