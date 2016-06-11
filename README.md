@@ -15,7 +15,7 @@ Documentation is also available at [rubydoc.info](http://www.rubydoc.info/github
 ### Prerequisite
  * JRuby  [Get Started](http://jruby.org/getting-started)
  * Package Manager  [Bundler](http://bundler.io/)
- * optional - but useful [RMV](https://rvm.io/)
+ * optional - but useful [RVM](https://rvm.io/)
 
 ### Installation 
 
@@ -84,9 +84,11 @@ provide convenience methods, such as retrieving all Communities  finding individ
 DCommunity.all
 DSpace.fromString ('some/handle')      
 DSpace.fromString ('ITEM.124')      
-DSpace.fromString ('EPERSON.a_netid')   
-DSpace.fromString ('GROUP.Anonymous')      
-DGroup.find('group_name')
+DCollection.find(10)     
+DEPerson.find ('email@there.edu')  
+DGroup.find('Anonymous') 
+DGroup.find(1) 
+DMetadataField.find('dc.contributor')
 ```
 
 If you want to make changes you can 'login' 
@@ -109,12 +111,13 @@ DCommunity.all.each { |c| puts [c.getCollections.length, c.getHandle, c.getName]
 ```
 
 Java objects can be converted to corresponding jrdspace objects, so that the additional functionality implemented by jrdspace classes becomes available. 
-For example all jrdspace objects derived from DSpaceObjects implement the parents and policies method:
+For example all jrdspace objects derived from DSpaceObjects implement the parents, policies, and  getMetaDataValues method:
 
 ```
-dso = DSpace.fromHandle('xxxxx/zzz') 
+dso = DSpace.fromString('xxxxx/zzz') 
 DSpace.create(dso).parents
 DSpace.create(dso).policies
+DSpace.create(dso).getMetaDataValues
 ```
 
 
