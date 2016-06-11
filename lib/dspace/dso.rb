@@ -10,11 +10,10 @@ module DSO
   # 
   # the wrapper object's class must be compatible with the type of the given dobj 
   def initialize(dobj)
-    #TODO compare
     @obj = dobj
     if dobj then
-      #puts self.class.name
-      #puts dobj.class.name
+      myname = self.class.name
+      raise "can't create #{myname} object from #{@obj}" if myname[1..-1] != @obj.getClass.getName.split('.')[-1]
     end
   end
 
