@@ -10,6 +10,8 @@ The companion project [cli-dspace](https://github.com/akinom/dspace-cli)  contai
 
 Documentation is also available at [rubydoc.info](http://www.rubydoc.info/github/akinom/dspace-jruby)
 
+I would like to hear from you if you download and use jrdsapce. Please do send me your feedback and PRs. 
+
 ## Installation
 
 ### Prerequisite
