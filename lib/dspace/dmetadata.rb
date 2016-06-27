@@ -17,13 +17,20 @@ class DMetadataField
     return MetadataField.find_by_element(DSpace.context, schm.getSchemaID, element, qualifier)
   end
 
-  def inspect
+  ##
+  # return "nil"  or <schema>.<element>[.<qualifier>]
+  def fullName
     return "nil" if @obj.nil?
     java_import org.dspace.content.MetadataSchema
     schema = MetadataSchema.find(DSpace.context, @obj.schemaID)
     str = "#{schema.getName}.#{@obj.element}"
     str += ".#{@obj.qualifier}" if @obj.qualifier
-    return "#<#{self.class.name}:#{str}>"
+    return str
+  end
+
+  def inspect
+    return "nil" if @obj.nil?
+    return "#<#{self.class.name}:#{fullName}>"
   end
 
 end

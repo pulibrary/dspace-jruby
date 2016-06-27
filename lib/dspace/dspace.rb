@@ -85,6 +85,12 @@ module DSpace
   end
 
   ##
+  #  return DSPace.create(dso).inspect or "nil"
+  def self.inspect(dso)
+    dso = DSpace.create(dso) if dso
+    dso.inspect
+  end
+  ##
   # return the DSpace object that is identified by the given type and identifier
   #
   # type_str_or_int must be oe of the integer values: BITTREAM .. EPERSON, or the corresponding string
