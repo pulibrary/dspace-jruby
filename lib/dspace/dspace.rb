@@ -170,6 +170,25 @@ module DSpace
     return dsos
   end
 
+  def self.findByGroupPolicy(group_ref_or_name, action_or_nil, resource_type_or_nil)
+    java_import org.dspace.eperson.Group
+    java_import org.dspace.storage.rdbms.DatabaseManager
+
+    group = DGroup.find(group_ref_or_name) if group_ref_or_name.is_a? String
+    raise "must give valied group" if group == nil or not group.is_a? Java::OrgDspaceEperson::Group
+
+    sql = "SELECT RESOURCE_ID, RESOURCE_TYPE_ID FROM RESOURCEPOLICY WHERE EPERSONGROUP_ID = #{group.getID} ";
+    sql += "AND ACTION_ID = #{action_or_nil} " if action_or_nil
+    sql += "AND RESOURCE_TYPE_ID = #{resource_type_or_nil} " if resource_type_or_nil
+
+    tri = DatabaseManager.queryTable(DSpace.context, "MetadataValue", sql)
+    dsos = [];
+    while (iter = tri.next())
+      dsos << self.find(iter.getIntColumn("resource_type_id"), iter.getIntColumn("resource_id"))
+    end
+    tri.close
+    return dsos
+  end
   ##
   # print available static methods for the give classes
   def self.help(klasses = [DCommunity, DCollection, DItem, DBundle, DBitstream, DEPerson,

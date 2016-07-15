@@ -1,5 +1,5 @@
-require 'dspace/dspace'
 require 'dspace/dconstants'
+require 'dspace/dspace'
 require 'dspace/dso'
 require 'dspace/ddspaceobject'
 require 'dspace/deperson'

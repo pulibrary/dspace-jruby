@@ -1,3 +1,22 @@
+class DMetadataSchema
+  include DSO
+
+  def self.all
+    java_import org.dspace.content.MetadataSchema
+    MetadataSchema.findAll DSpace.context
+  end
+
+  def fields
+    java_import org.dspace.content.MetadataField
+    MetadataField.findAllInSchema(DSpace.context, @obj.getSchemaID)
+  end
+
+  def inspect
+    return "nil" if @obj.nil?
+    return "#<#{self.class.name}:#{@obj.getName}>"
+  end
+end
+
 class DMetadataField
   include DSO
 
