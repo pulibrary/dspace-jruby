@@ -1,3 +1,4 @@
+require 'dspace/dconfig'
 require 'dspace/dconstants'
 require 'dspace/dspace'
 require 'dspace/dso'
