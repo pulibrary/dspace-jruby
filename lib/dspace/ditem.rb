@@ -12,7 +12,7 @@ class DItem
   end
 
   ##
-  # return array of all org.dspace.content.Item objects
+  # return array of all archived org.dspace.content.Item objects
   def self.all()
     java_import org.dspace.content.Item;
     list, stp = [], iter
