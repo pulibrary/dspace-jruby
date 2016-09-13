@@ -50,11 +50,9 @@ class DGroup
   end
 
   ##
-  # return EPerson and Groups that are (direct) require 'faker;members of this DGroup
-  #
-  # name must be a string
+  # return EPerson and Groups that are (direct) members of this Group
   def members
-    return @obj.getMembers + @obj.getMemberGroups
+    return  @obj.getMemberGroups.collect { |p| p }  + @obj.getMembers.collect { |p| p }
   end
 
   ##
