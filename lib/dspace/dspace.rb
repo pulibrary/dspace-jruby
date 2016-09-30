@@ -125,9 +125,15 @@ module DSpace
   end
 
   ##
+  # get dpace service manager
+  def self.getServiceManager
+    org.dspace.utils.DSpace.new().getServiceManager()
+  end
+
+  ##
   # get a dspace service by name
   def self.getService(service_name, java_klass)
-    org.dspace.utils.DSpace.new().getServiceManager().getServiceByName(service_name,java_klass)
+    getServiceManager().getServiceByName(service_name,java_klass)
   end
 
   ##
