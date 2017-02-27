@@ -29,4 +29,19 @@ class DCommunity
     return comm
   end
 
+  def getCollections
+     return DCommunity.getCollections(self.dso)
+  end
+
+  def self.getCollections(com)
+      colls = []
+      if (not com.is_a? Array) then
+        com = [com]
+      end
+      com.each do |c|
+        colls = colls +  c.getCollections.collect { |c| c }
+        colls = colls + getCollections(c.getSubcommunities.collect{ |sc| sc})
+      end
+      return colls
+    end
 end
