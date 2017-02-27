@@ -17,7 +17,7 @@ module DWork
     elsif (obj.getType == DConstants::COMMUNITY) then
       wsis = []
       obj.getAllCollections.each do |col|
-        wsis += findAll(col)
+        wsis += findAll(col, klass)
       end
       return wsis
     elsif (obj.getType == DConstants::ITEM) then
