@@ -113,14 +113,23 @@ module DSpace
     return klass.send :find, id
   end
 
-  def self.fromString(type_id_or_handle)
+  def self.fromString(type_id_or_handle_or_title)
     #TODO handle MetadataField string
-    splits = type_id_or_handle.split('.', 2)
-    if (2 == splits.length) then
-      self.find(splits[0].upcase, splits[1])
+    if type_id_or_handle_or_title.start_with? 'TITLE' then
+      str = type_id_or_handle_or_title[6..-1]
+      dsos = DSpace.findByMetadataValue('dc.title', str, DConstants::ITEM)
+      if (dsos.length > 1) then
+        raise "multiple matches for #{type_id_or_handle_or_title}"
+      end
+      return dsos[0]
     else
-      java_import org.dspace.handle.HandleManager
-      return HandleManager.resolve_to_object(DSpace.context, type_id_or_handle);
+      splits = type_id_or_handle_or_title.split('.', 2)
+      if (2 == splits.length) then
+        self.find(splits[0].upcase, splits[1])
+      else
+        java_import org.dspace.handle.HandleManager
+        return HandleManager.resolve_to_object(DSpace.context, type_id_or_handle_or_title);
+      end
     end
   end
 
