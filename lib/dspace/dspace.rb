@@ -2,7 +2,6 @@ module DSpace
   ROOT = File.expand_path('../..', __FILE__)
   @@config = nil;
 
-
   ##
   # return the name of the wrapper klass that corresponds to the give parameter
   #
@@ -39,7 +38,9 @@ module DSpace
       java_import org.dspace.core.Constants
       java_import org.dspace.content.DSpaceObject
     end
-    puts "DB #{DSpace.context.getDBConnection.toString}"
+    if (@@config)
+      @@config.print
+    end
     return @@config != nil
   end
 
@@ -270,6 +271,10 @@ module DSpace
 
         @context = org.dspace.core.Context.new()
       end
+    end
+
+    def print
+      puts "DB #{@context.getDBConnection.toString}"
     end
   end
 
