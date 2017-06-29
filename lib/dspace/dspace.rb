@@ -45,6 +45,15 @@ module DSpace
   end
 
   ##
+  # load DSpace configurations and jar files from the dspace_dir directory;
+  # if dspace_dir is nil use the value of the environment variable 'DSPACE_HOME' or if undefined as well default to '/dspace'
+  def self.reload(dspace_dir = nil)
+    @@config = nil
+    load(dspace_dir)
+  end
+
+
+  ##
   # return the current org.dspace.core.Context
   #
   # this method fails unless it is preceded by a successfull DSPace.load call
