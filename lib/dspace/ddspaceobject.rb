@@ -15,6 +15,16 @@ module DDSpaceObject
     return moms;
   end
 
+  def isInside(dobj)
+    return false if dobj == nil
+    p = @obj;
+    while p do
+      return true if (p == dobj)
+      p = p.getParentObject();
+    end
+    return false
+  end
+
   def policies()
     java_import org.dspace.authorize.AuthorizeManager
     pols = AuthorizeManager.getPolicies(DSpace.context, @obj)
