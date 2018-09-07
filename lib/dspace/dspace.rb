@@ -179,14 +179,17 @@ module DSpace
 
     sql = "SELECT MV.resource_id, MV.resource_type_id  FROM MetadataValue MV";
     sql = sql + " where MV.metadata_field_id= #{field.getFieldID} "
-    if (not value_or_nil.nil?) then
-      sql = sql + " AND MV.text_value LIKE '#{value_or_nil}'"
-    end
     if (restrict_to_type) then
       sql = sql + " AND MV.resource_type_id = #{objTypeId(restrict_to_type)}"
     end
+    if (not value_or_nil.nil?) then
+      sql = sql + " AND MV.text_value LIKE ?"
+      tri = DatabaseManager.queryTable(DSpace.context, "MetadataValue", sql, value_or_nil)
+    else
+      tri = DatabaseManager.queryTable(DSpace.context, "MetadataValue", sql)
+    end
 
-    tri = DatabaseManager.queryTable(DSpace.context, "MetadataValue", sql)
+
     dsos = [];
     while (iter = tri.next())
       dsos << self.find(iter.getIntColumn("resource_type_id"), iter.getIntColumn("resource_id"))
