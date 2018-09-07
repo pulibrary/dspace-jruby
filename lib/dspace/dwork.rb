@@ -68,6 +68,12 @@ class DWorkspaceItem
     return WorkspaceItem.find(DSpace.context, id)
   end
 
+  def self.findByNetId(netid_or_email)
+    java_import org.dspace.content.WorkspaceItem
+    person = DEPerson.find(netid_or_email)
+    return WorkspaceItem.find_by_eperson(DSpace.context, person)
+  end
+
   ##
   # returns all instances of org.dspace.workflow.WorkspaceItem if the obj parameter is nil, otherwise
   # all instances of org.dspace.workflow.WorkspaceItem associated with the the given obj
