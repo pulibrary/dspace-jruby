@@ -24,7 +24,7 @@ I would like to hear from you if you download and use jrdsapce. Please do send m
 Add the gem to your projects Gemfile: 
 
 ```
-gem 'jrdspace'      # pull from rubygems 
+gem install 'jrdspace'      # pull from rubygems 
 
 gem 'jrdspace', :git => 'https://github.com/akinom/dspace-jruby', :branch => 'master`
 
