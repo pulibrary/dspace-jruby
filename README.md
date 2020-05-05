@@ -1,16 +1,33 @@
-# jrdspace
+# DSpace JRuby
 
-jrdsapce is implemented in JRuby. 
+[![CircleCI](https://circleci.com/gh/pulibrary/dspace-jruby.svg?style=svg)](https://circleci.com/gh/pulibrary/dspace-jruby)
+[![Inch CI](https://inch-ci.org/github/pulibrary/dspace-jruby.svg?branch=master)](https://inch-ci.org/github/pulibrary/dspace-jruby)
 
-It provides a simple mechanism to connect to a [DSpace](https://github.com/DSpace/DSpace) installation and to access and manipulate the Java Objects managed by classes from the dspace-api package. 
+DSpace JRuby is implemented in JRuby. This project was originally titled
+`jrdspace`. *Please be aware that this Gem is no longer actively maintained.*
+
+It provides a simple mechanism to connect to a [DSpace](https://github.com/DSpace/DSpace) installation and to access and manipulate the Java Objects managed by classes from the dspace-api package. *Please note that this was developed only to support DSpace 5.3 releases.*
 
 jrdspace contains an interactive console and therefore enables quick experimentation. 
 
-The companion project [cli-dspace](https://github.com/akinom/dspace-cli)  contains utilities that make use of jrdspace.
+The companion project [cli-dspace](https://github.com/pulibrary/dspace-cli) contains utilities that make use of jrdspace.
 
-Documentation is also available at [rubydoc.info](http://www.rubydoc.info/github/akinom/dspace-jruby)
+## Development
 
-I would like to hear from you if you download and use jrdsapce. Please do send me your feedback and PRs. 
+### Getting started with JRuby
+
+```bash
+rvm use --create jruby-9.1.7.0@bundler1.10
+gem install -v 1.10.6 bundler
+bundle install
+```
+
+### Generating Documentation
+
+```bash
+bundle exec yardoc
+open doc/index.html
+```
 
 ## Installation
 
@@ -19,14 +36,14 @@ I would like to hear from you if you download and use jrdsapce. Please do send m
  * Package Manager  [Bundler](http://bundler.io/)
  * optional - but useful [RVM](https://rvm.io/)
 
-### Installation 
+### Installation
 
 Add the gem to your projects Gemfile: 
 
 ```
 gem install 'jrdspace'      # pull from rubygems 
 
-gem 'jrdspace', :git => 'https://github.com/akinom/dspace-jruby', :branch => 'master`
+gem 'jrdspace', :git => 'https://github.com/pulibrary/dspace-jruby', :branch => 'master`
 
 ```
 
