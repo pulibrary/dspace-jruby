@@ -10,7 +10,7 @@ GEM
   specs:
     jar (0.0.1)
     json (2.3.0-java)
-    rake (13.0.1)
+    rake (10.4.2)
     yard (0.9.25)
 
 PLATFORMS
@@ -19,7 +19,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.10)
   jrdspace!
-  rake
+  rake (~> 10.0)
   yard
 
 BUNDLED WITH
