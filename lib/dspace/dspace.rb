@@ -1,11 +1,13 @@
+# @abstract Module providing interfaces for interfacing with the DSpace kernel
 module DSpace
   ROOT = File.expand_path('../..', __FILE__)
   @@config = nil;
 
-  ##
-  # return the name of the wrapper klass that corresponds to the give parameter
+  # Retrieve the Class modeling the internal DSpace Object using a string or integer constant for the resource ID
+  # @param type_str_or_int [String]
+  # @return [Object]
   #
-  # type_str_or_int must be oe of the integer values: BITTREAM .. EPERSON, or the corresponding string
+  # @note type_str_or_int must be one of the following constant values: BITTREAM or EPERSON, or the corresponding string for these constants
   def self.objTypeStr(type_str_or_int)
     if type_str_or_int.class == String and Constants.typeText.find_index type_str_or_int.upcase then
       klassName = type_str_or_int.capitalize
@@ -21,15 +23,17 @@ module DSpace
     return klassName
   end
 
-  ##
-  # convert string to corresponding constant: BITSTREAM, BUNDLE, ...
+  # Convert a String to an internal DSpace constant for resolving resource type
+  # @param type_str_or_int [String]
+  # @return [Integer]
   def self.objTypeId(type_str_or_int)
     obj_typ = Constants.typeText.find_index objTypeStr(type_str_or_int).upcase
   end
 
-  ##
-  # load DSpace configurations and jar files from the dspace_dir directory;
-  # if dspace_dir is nil use the value of the environment variable 'DSPACE_HOME' or if undefined as well default to '/dspace'
+  # Initialize the DSpace kernel by searching within directory for the DSpace installation
+  # @param dspace_dir [String]
+  # @note if dspace_dir is nil, this will use the value of the environment variable $DSPACE_HOME
+  # @note if $DSPACE_HOME is undefined also, it will then default to '/dspace'
   def self.load(dspace_dir = nil)
     if (@@config.nil?) then
       @@config = Config.new(dspace_dir || ENV['DSPACE_HOME'] || "/dspace")
@@ -44,73 +48,78 @@ module DSpace
     return @@config != nil
   end
 
-  ##
-  # load DSpace configurations and jar files from the dspace_dir directory;
-  # if dspace_dir is nil use the value of the environment variable 'DSPACE_HOME' or if undefined as well default to '/dspace'
+  # Reinitialize the DSpace kernel by searching within directory for the DSpace installation
+  # @param dspace_dir [String]
+  # @note if dspace_dir is nil, this will use the value of the environment variable $DSPACE_HOME
+  # @note if $DSPACE_HOME is undefined also, it will then default to '/dspace'
   def self.reload(dspace_dir = nil)
     @@config = nil
     load(dspace_dir)
   end
 
-
-  ##
-  # return the current org.dspace.core.Context
-  #
-  # this method fails unless it is preceded by a successfull DSPace.load call
+  # Accesses the global context for interfacing with the DSpace kernel
+  # @raise [StandardError]
+  # @return [org.dspace.core.Context]
   def self.context
     raise "must call load to initialize" if @@config.nil?
     raise "should never happen" if @@config.context.nil?
     return @@config.context
   end
 
-  ##
-  # renew  the current org.dspace.core.Context; this abandons any uncommited database changes
+  # Resets the current context used for interfacing with the DSpace kernel
+  # @note this *will* ensure that all changes which have not been committed to the database will be lost
+  # @raise [StandardError]
+  # @return [org.dspace.core.Context]
   def self.context_renew
     raise "must call load to initialize" if @@config.nil?
     raise "should never happen" if @@config.context.nil?
     return @@config.context_renew
   end
 
-  ##
-  # set the current dspace user to the one with the given netid
+  # Sets the current user for this session of working with the DSpace kernel
+  # @note this is necessary in order to provide admin. access for modifying DSpace Objects
+  # @param [String] netid the institutional NetID used to find the user account for the login
   def self.login(netid)
     self.context.setCurrentUser(DEPerson.find(netid))
     return nil
   end
 
-  ##
-  # commit changes to the database
+  # Commit changes to the database for the current DSpace installation
+  # @see Context.commit
   def self.commit
     self.context.commit
   end
 
-  ##
-  # commit a wrapper object for the given java object;
-  # the type of the warpper is determined by the class of the given java object
-  #
+  # Construct one of the wrapper Objects from one of the internal DSpace Objects
+  # @raise [StandardError]
+  # @return [DSObject]
   def self.create(dso)
     raise "dso must not be nil" if dso.nil?
     klass = Object.const_get "D" + dso.class.name.gsub(/.*::/, '')
     klass.send :new, dso
   end
 
-  ##
-  #  return DSPace.create(dso).inspect or "nil"
+  # Construct and inspect a DSpace Object
+  # @param dso [DSObject]
+  # @return [String]
+  # @see DSObject#inspect
   def self.inspect(dso)
     dso = DSpace.create(dso) if dso
     dso.inspect
   end
-  ##
-  # return the DSpace object that is identified by the given type and identifier
+
+  # Method for retrieving a DSpace object by the resource type and internal ID
+  # @param type_id_or_handle_or_title [String]
+  # @param identifier [String]
+  # @return [DSObject]
+  # @example
+  #   DSpace.find(DSpace::COLLECTION, 106)
+  #   DSpace.find("ITEM", 10)
+  #   DSpace.find("GROUP", "Anonymous")
+  #   DSpace.find("EPERSON", "her@there.com")
   #
-  # type_str_or_int must be oe of the integer values: BITTREAM .. EPERSON, or the corresponding string
-  #
-  # identifier must be an integer or string value uniquely identifying the object
-  #
-  #     DSpace.find(DSpace::COLLECTION, 106)
-  #     DSpace.find("ITEM", 10)
-  #     DSpace.find("GROUP", "Anonymous")
-  #     DSpace.find("EPERSON", "her@there.com")
+  # @note type_str_or_int must be be of the integer values BITTREAM and EPERSON, or the corresponding string
+  # @note identifier must be an integer or string value uniquely identifying the object
   def self.find(type_str_or_int, identifier)
     type_str = DSpace.objTypeStr(type_str_or_int)
     type_id = DSpace.objTypeId(type_str)
@@ -123,6 +132,9 @@ module DSpace
     return klass.send :find, id
   end
 
+  # Method for retrieving a DSpace object by the internal ID, Handle, or title
+  # @param type_id_or_handle_or_title [String]
+  # @return [DSObject]
   def self.fromString(type_id_or_handle_or_title)
     #TODO handle MetadataField string
     if type_id_or_handle_or_title.start_with? 'TITLE' then
@@ -143,35 +155,42 @@ module DSpace
     end
   end
 
-  ##
-  # get dpace service manager
+  # Access the service manager for the DSpace kernel
+  # @see https://github.com/DSpace/DSpace/blob/dspace-5.3/dspace-services/src/main/java/org/dspace/servicemanager/DSpaceServiceManager.java
+  # @return [org.dspace.servicemanager.DSpaceServiceManager]
   def self.getServiceManager
     org.dspace.utils.DSpace.new().getServiceManager()
   end
 
-  ##
-  # get a dspace service by name
+  # Access a service object registered with the DSpace kernel
+  # This follows the enterprise design pattern: https://en.wikipedia.org/wiki/Service_locator_pattern
+  # This is primarily used for interfacing indirectly with external services integrated with DSpace (e. g. Apache Solr for discovery)
+  # @see 
   def self.getService(service_name, java_klass)
     getServiceManager().getServiceByName(service_name,java_klass)
   end
 
-  ##
-  # get the SoltServiveImpl
+  # Access the SolrServiceImpl object
+  # This is primarily used for interfacing directly with the underlying Apache Solr installation
+  # @see https://github.com/DSpace/DSpace/blob/dspace-5.3/dspace-api/src/main/java/org/dspace/discovery/SolrServiceImpl.java
+  # @return [org.dspace.discovery.SolrServiceImpl]
   def self.getIndexService()
     java_import org.dspace.discovery.SolrServiceImpl;
     self.getService("org.dspace.discovery.IndexingService", SolrServiceImpl)
   end
 
-  ##
-  # if value_or_nil is nil and restrict_to_type is nil return all DSpaceObjects have a value for the
-  # given metadata field
+  # Queries the DSpace database for DSpace Communities, Collections, and Items which fall within a user-defined resource policy
+  # @see https://github.com/DSpace/DSpace/blob/dspace-5.3/dspace-api/src/main/java/org/dspace/content/DSpaceObject.java
+  # @see [DSObject]
+  # @param fully_qualified_metadata_field [String] the metadata field used for the query (e.g. dc.title or dc.date.accessioned)
+  # @param value_or_nil [String] the value for the metadata field in the query
+  # @param restrict_to_type [String] the type of resource
+  # @return [DSObject] the DSpace Objects
   #
-  # if value_or_nil is not nil restrict to those whose value is equal to the given paramter
-  #
-  # if restrict_to_typ is not nil, restrict to results of the given type
-  #
-  # restrict_to_type must be one of BITSTREAM, .., EPERSON
-
+  # @note restrict_to_type must be one of BITSTREAM or EPERSON
+  # @note if value_or_nil is nil and restrict_to_type is nil, this will return all DSpaceObjects with the value for the given metadata field
+  # @note if value_or_nil is not nil, this will restrict to those DSpace Objects which have metadata field values requal to the value
+  # @note if restrict_to_typ is not nil, this will restrict to results to the provided resource type
   def self.findByMetadataValue(fully_qualified_metadata_field, value_or_nil, restrict_to_type)
     java_import org.dspace.storage.rdbms.DatabaseManager
     field = DMetadataField.find(fully_qualified_metadata_field)
@@ -198,6 +217,10 @@ module DSpace
     return dsos
   end
 
+  # Queries the DSpace database for DSpace Communities, Collections, and Items which fall within a user-defined resource policy
+  # @see https://github.com/DSpace/DSpace/blob/dspace-5.3/dspace-api/src/main/java/org/dspace/content/DSpaceObject.java
+  # @see [DSObject]
+  # @return [DSObject]
   def self.findByGroupPolicy(group_ref_or_name, action_or_nil, resource_type_or_nil)
     java_import org.dspace.eperson.Group
     java_import org.dspace.storage.rdbms.DatabaseManager
@@ -217,7 +240,8 @@ module DSpace
     tri.close
     return dsos
   end
-  ##
+
+  # Provides documentation using STDOUT for the methods on the DSpace Classes
   # print available static methods for the give classes
   def self.help(klasses = [DCommunity, DCollection, DItem, DBundle, DBitstream, DEPerson,
                            DWorkflowItem, DWorkspaceItem, DMetadataField, DConstants, DSpace])
@@ -237,7 +261,11 @@ module DSpace
     return nil
   end
 
+  # @abstract This models the configuration used by the DSpace kernel
   class Config
+
+    # constructor
+    # @param dspace_home [String] the path to the DSpace installation directory
     def initialize(dspace_home)
       @dspace_dir = dspace_home
       puts "Using #{@dspace_dir}"
@@ -247,24 +275,35 @@ module DSpace
       @kernel = nil;
     end
 
+    # Accessor for the DSpace installation directory
+    # @return [String]
     def dspace_dir
       @dspace_dir || raise('dspace_dir is undefined');
     end
 
+    # Accessor for the DSpace installation configuration file
+    # @return [String]
     def dspace_cfg
       @dspace_cfg || raise('dspace.cfg is undefined');
     end
 
+    # Accessor for the DSpace kernel context object
+    # @return [org.dspace.core.Context]
     def context
       init
       return @context
     end
 
+    # This rebuilds the Context object for the DSpace kernel
+    # @return [org.dspace.core.Context]
     def context_renew
       @context.abort if @context
       @context = org.dspace.core.Context.new()
     end
 
+    # Builds the org.dspace.core.Context Class
+    # @see https://github.com/DSpace/DSpace/blob/dspace-5.3/dspace-api/src/main/java/org/dspace/core/Context.java
+    # @return [org.dspace.core.Context]
     def init
       if @context.nil? then
         puts "Loading jars"
@@ -285,10 +324,9 @@ module DSpace
       end
     end
 
+    # Print to STDOUT the current database connection information
     def print
       puts "DB #{@context.getDBConnection.toString}"
     end
   end
-
 end
-
