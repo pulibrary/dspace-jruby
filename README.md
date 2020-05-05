@@ -12,6 +12,16 @@ Documentation is also available at [rubydoc.info](http://www.rubydoc.info/github
 
 I would like to hear from you if you download and use jrdsapce. Please do send me your feedback and PRs. 
 
+## Development
+
+### Getting started with JRuby
+
+```bash
+rvm use --create jruby-9.1.7.0@bundler1.10
+gem install -v 1.10.6 bundler
+bundle install
+```
+
 ## Installation
 
 ### Prerequisite

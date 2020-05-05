@@ -1,0 +1,26 @@
+PATH
+  remote: .
+  specs:
+    jrdspace (0.0.14)
+      jar
+      json
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    jar (0.0.1)
+    json (2.3.0-java)
+    rake (13.0.1)
+    yard (0.9.25)
+
+PLATFORMS
+  java
+
+DEPENDENCIES
+  bundler (~> 1.10)
+  jrdspace!
+  rake
+  yard
+
+BUNDLED WITH
+   1.10.6

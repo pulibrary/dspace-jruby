@@ -1,0 +1,18 @@
+version: 2.1
+jobs:
+  documentation:
+    working_directory: ~/dspace-jruby
+    docker:
+      - image: circleci/jruby:1.7-jdk-browsers
+    steps:
+      - checkout
+      - run:
+          name: Install the dependencies
+          command: bundle install
+      - run:
+          name: Build the YARD documentation
+          command: bundle exec yardoc
+workflows:
+  ci:
+    jobs:
+      - documentation
