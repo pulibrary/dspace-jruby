@@ -22,6 +22,13 @@ gem install -v 1.10.6 bundler
 bundle install
 ```
 
+### Generating Documentation
+
+```bash
+bundle exec yardoc
+open doc/index.html
+```
+
 ## Installation
 
 ### Prerequisite
