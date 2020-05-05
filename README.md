@@ -1,6 +1,9 @@
-# jrdspace
+# DSpace JRuby
 
-jrdsapce is implemented in JRuby. 
+[![CircleCI](https://circleci.com/gh/pulibrary/dspace-jruby.svg?style=svg)](https://circleci.com/gh/pulibrary/dspace-jruby)
+[![Inch CI](https://inch-ci.org/github/pulibrary/dspace-jruby.svg?branch=master)](https://inch-ci.org/github/pulibrary/dspace-jruby)
+
+jrdsapce is implemented in JRuby.
 
 It provides a simple mechanism to connect to a [DSpace](https://github.com/DSpace/DSpace) installation and to access and manipulate the Java Objects managed by classes from the dspace-api package. 
 
