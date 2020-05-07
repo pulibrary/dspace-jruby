@@ -1,4 +1,4 @@
-# @abstract Module providing interfaces for interfacing with the DSpace kernel
+# Module providing interfaces for interfacing with the DSpace kernel
 module DSpace
   ROOT = File.expand_path('../..', __FILE__)
   @@config = nil;
@@ -92,7 +92,7 @@ module DSpace
 
   # Construct one of the wrapper Objects from one of the internal DSpace Objects
   # @raise [StandardError]
-  # @return [DSObject]
+  # @return [org.dspace.content.DSpaceObject]
   def self.create(dso)
     raise "dso must not be nil" if dso.nil?
     klass = Object.const_get "D" + dso.class.name.gsub(/.*::/, '')
@@ -100,9 +100,9 @@ module DSpace
   end
 
   # Construct and inspect a DSpace Object
-  # @param dso [DSObject]
+  # @param dso [org.dspace.content.DSpaceObject]
   # @return [String]
-  # @see DSObject#inspect
+  # @see org.dspace.content.DSpaceObject#inspect
   def self.inspect(dso)
     dso = DSpace.create(dso) if dso
     dso.inspect
@@ -111,7 +111,7 @@ module DSpace
   # Method for retrieving a DSpace object by the resource type and internal ID
   # @param type_id_or_handle_or_title [String]
   # @param identifier [String]
-  # @return [DSObject]
+  # @return [org.dspace.content.DSpaceObject]
   # @example
   #   DSpace.find(DSpace::COLLECTION, 106)
   #   DSpace.find("ITEM", 10)
@@ -134,7 +134,7 @@ module DSpace
 
   # Method for retrieving a DSpace object by the internal ID, Handle, or title
   # @param type_id_or_handle_or_title [String]
-  # @return [DSObject]
+  # @return [org.dspace.content.DSpaceObject]
   def self.fromString(type_id_or_handle_or_title)
     #TODO handle MetadataField string
     if type_id_or_handle_or_title.start_with? 'TITLE' then
@@ -181,11 +181,11 @@ module DSpace
 
   # Queries the DSpace database for DSpace Communities, Collections, and Items which fall within a user-defined resource policy
   # @see https://github.com/DSpace/DSpace/blob/dspace-5.3/dspace-api/src/main/java/org/dspace/content/DSpaceObject.java
-  # @see [DSObject]
+  # @see [org.dspace.content.DSpaceObject]
   # @param fully_qualified_metadata_field [String] the metadata field used for the query (e.g. dc.title or dc.date.accessioned)
   # @param value_or_nil [String] the value for the metadata field in the query
   # @param restrict_to_type [String] the type of resource
-  # @return [DSObject] the DSpace Objects
+  # @return [org.dspace.content.DSpaceObject] the DSpace Objects
   #
   # @note restrict_to_type must be one of BITSTREAM or EPERSON
   # @note if value_or_nil is nil and restrict_to_type is nil, this will return all DSpaceObjects with the value for the given metadata field
@@ -219,8 +219,7 @@ module DSpace
 
   # Queries the DSpace database for DSpace Communities, Collections, and Items which fall within a user-defined resource policy
   # @see https://github.com/DSpace/DSpace/blob/dspace-5.3/dspace-api/src/main/java/org/dspace/content/DSpaceObject.java
-  # @see [DSObject]
-  # @return [DSObject]
+  # @return [org.dspace.content.DSpaceObject]
   def self.findByGroupPolicy(group_ref_or_name, action_or_nil, resource_type_or_nil)
     java_import org.dspace.eperson.Group
     java_import org.dspace.storage.rdbms.DatabaseManager
@@ -261,7 +260,7 @@ module DSpace
     return nil
   end
 
-  # @abstract This models the configuration used by the DSpace kernel
+  # This models the configuration used by the DSpace kernel
   class Config
 
     # constructor
