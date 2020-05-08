@@ -1,5 +1,6 @@
 ##
 # Class wrapper for org.dspace.content.MetadataSchema
+# @see https://github.com/DSpace/DSpace/blob/dspace-5.3/dspace-api/src/main/java/org/dspace/content/MetadataSchema.java
 class DMetadataSchema
   include DSO
 
@@ -33,15 +34,16 @@ end
 
 ##
 # Class wrapper for org.dspace.content.MetadataField
+# @see https://github.com/DSpace/DSpace/blob/dspace-5.3/dspace-api/src/main/java/org/dspace/content/MetadataField.java
 class DMetadataField
   include DSO
 
   ##
   # Get Metadatafield with given filters.
   #
-  # @param fully_qualified_metadata_field [string] must follow format: 
+  # @param fully_qualified_metadata_field [string] must follow format:
   #   schema.element[.qualifier]
-  # @return [nil, org.dspace.content.MetadataField] the object with the given 
+  # @return [nil, org.dspace.content.MetadataField] the object with the given
   #   field name
   def self.find(fully_qualified_metadata_field)
     java_import org.dspace.content.MetadataSchema
@@ -57,7 +59,7 @@ class DMetadataField
 
   ##
   # Get full name of MetadataField
-  # 
+  #
   # @return [String] "nil" or <schema>.<element>[.<qualifier>]
   def fullName
     return "nil" if @obj.nil?
