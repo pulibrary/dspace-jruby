@@ -5,16 +5,20 @@ class DBitstream
   include DDSpaceObject
 
   ##
-  # return array of all org.dspace.content.Bitstream objects
+  # Collect all Bitstream objects from Dspace context
+  # 
+  # @return [Array<org.dspace.content.Bitstream>]
   def self.all()
     java_import org.dspace.content.Bitstream;
     return Bitstream.findAll(DSpace.context)
   end
 
   ##
-  # returns nil or the org.dspace.content.Bitstream object with the given id
+  # Get corresponding Bitstream object from a given id
   #
-  # id must be an integer
+  # @param id [Integer] the Bitstream id
+  # @return [nil, org.dspace.content.Bitstream] either the corresponding 
+  #   bitstream object or nil if it couldn't be found.
   def self.find(id)
     java_import org.dspace.content.Bitstream;
     return Bitstream.find(DSpace.context, id)

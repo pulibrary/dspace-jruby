@@ -1,29 +1,48 @@
+##
+# Class wrapper for org.dspace.content.MetadataSchema
 class DMetadataSchema
   include DSO
 
+  ##
+  # Get all MetaDataSchema within Dspace context
+  #
+  # @return [Array<org.dspace.content.MetadataSchema>] All schemas
   def self.all
     java_import org.dspace.content.MetadataSchema
     MetadataSchema.findAll DSpace.context
   end
 
+  ##
+  # Get all MetaDatafields within Dspace context
+  #
+  # @return [Array<org.dspace.content.MetadataField>] All fields
   def fields
     java_import org.dspace.content.MetadataField
     MetadataField.findAllInSchema(DSpace.context, @obj.getSchemaID)
   end
 
+  ##
+  # View string representation of object
+  #
+  # @return [String] string representation
   def inspect
     return "nil" if @obj.nil?
     return "#<#{self.class.name}:#{@obj.getName}>"
   end
 end
 
+##
+# Class wrapper for org.dspace.content.MetadataField
 class DMetadataField
   include DSO
 
   ##
-  # returns nil or the org.dspace.content.MetadataField object with the given field_name
+  # Get Metadatafield with given filters.
   #
-  # field_name must be a formmatted  string: schema.element[.qualifier]
+  # @param fully_qualified_metadata_field [string] must follow format: 
+  #   schema.element[.qualifier]
+  # @return [nil, org.dspace.content.MetadataField] the object with the given 
+  #   field name
   def self.find(fully_qualified_metadata_field)
     java_import org.dspace.content.MetadataSchema
     java_import org.dspace.content.MetadataField
@@ -37,7 +56,9 @@ class DMetadataField
   end
 
   ##
-  # return "nil"  or <schema>.<element>[.<qualifier>]
+  # Get full name of MetadataField
+  # 
+  # @return [String] "nil" or <schema>.<element>[.<qualifier>]
   def fullName
     return "nil" if @obj.nil?
     java_import org.dspace.content.MetadataSchema
@@ -47,6 +68,10 @@ class DMetadataField
     return str
   end
 
+  ##
+  # View string representation of object
+  #
+  # @return [String] string representation
   def inspect
     return "nil" if @obj.nil?
     return "#<#{self.class.name}:#{fullName}>"
