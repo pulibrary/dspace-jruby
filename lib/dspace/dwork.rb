@@ -1,8 +1,7 @@
-##
-# Helper module for DWorkflow and DWorkSpace
+# Module for methods common to the DWorkflow and DWorkSpace Classes
 module DWork
 
-  ## 
+  ##
   # Returns all instances of klass if the obj parameter is nil, otherwise
   # all instances of klass associated with the the given obj.
   #
@@ -37,6 +36,7 @@ end
 
 ##
 # A class wrapper for org.dspace.workflow.WorkflowItem
+# @see https://github.com/DSpace/DSpace/blob/dspace-5.3/dspace-api/src/main/java/org/dspace/workflow/WorkflowItem.java
 class DWorkflowItem
   include DSO
 
@@ -50,11 +50,11 @@ class DWorkflowItem
     return WorkflowItem.find(DSpace.context, id)
   end
 
-  # ??
-  ##
-  # Find org.dspace.workflow.WorkflowItem from an object
-  #
-  # @return [Array<org.dspace.workflow.WorkflowItem>] all Workflow Items
+  # Retrieves all WorkflowItems related to this object
+  # @note returns all instances of org.dspace.workflow.WorkflowItem if the obj parameter is nil, otherwise
+  #   all instances of org.dspace.workflow.WorkflowItem associated with the the given obj
+  # @param obj [org.dspace.context.DSpaceObject]
+  # @return [Array<DWork>]
   def self.findAll(obj)
     java_import org.dspace.workflow.WorkflowItem
     return DWork.findAll(obj, WorkflowItem)
@@ -72,6 +72,7 @@ class DWorkspaceItem
   #
   # @param id [Integer] search id
   # @return [nil, org.dspace.workflow.WorkspaceItem] the item or nil if not found
+  # @see https://github.com/DSpace/DSpace/blob/dspace-5.3/dspace-api/src/main/java/org/dspace/content/WorkspaceItem.java
   def self.find(id)
     java_import org.dspace.content.WorkspaceItem
     return WorkspaceItem.find(DSpace.context, id)
@@ -89,7 +90,7 @@ class DWorkspaceItem
   end
 
   ##
-  # Return all instances of org.dspace.workflow.WorkspaceItem if the obj 
+  # Return all instances of org.dspace.workflow.WorkspaceItem if the obj
   #   parameter is nil, otherwise all instances of WorkspaceItem associated with
   #   the given obj
   #
