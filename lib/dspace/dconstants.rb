@@ -1,42 +1,43 @@
 ##
-# This class wraps an org.dspace.content.Community object
+# Transforms constants to strings, corresponding to those defined in org.dspace.core.Constants
 class DConstants
 
-  ##
-  # constants corresponding to those defined in org.dspace.core.Constants
-  BITSTREAM = 0;
-  BUNDLE = 1;
-  ITEM = 2;
-  COLLECTION = 3;
-  COMMUNITY = 4;
-  SITE = 5;
-  GROUP = 6;
-  EPERSON = 7;
+  BITSTREAM = 0; # BITSTREAM type object ID
+  BUNDLE = 1; # BUNDLE type object ID
+  ITEM = 2; # ITEM type object ID
+  COLLECTION = 3; # COLLECTION type object ID
+  COMMUNITY = 4; # COMMUNITY type object ID
+  SITE = 5; # SITE type object ID
+  GROUP = 6; # GROUP type object ID
+  EPERSON = 7; # EPERSON type object ID
 
-  READ = 0;
-  WRITE = 1;
-  DELETE = 2;
-  ADD = 3;
-  REMOVE = 4;
-  WORKFLOW_STEP_1 = 5;
-  WORKFLOW_STEP_2 = 6;
-  WORKFLOW_STEP_3 = 7;
-  WORKFLOW_ABORT = 8;
-  DEFAULT_BITSTREAM_READ = 9;
-  DEFAULT_ITEM_READ = 10;
-  ADMIN = 11;
+  READ = 0; # READ type action ID
+  WRITE = 1; # WRITE type action ID
+  DELETE = 2; # DELETE type action ID
+  ADD = 3; # ADD type action ID
+  REMOVE = 4; # REMOVE type action ID
+  WORKFLOW_STEP_1 = 5; # WORKFLOW_STEP_1 type action ID
+  WORKFLOW_STEP_2 = 6; # WORKFLOW_STEP_2 type action ID
+  WORKFLOW_STEP_3 = 7; # WORKFLOW_STEP_3 type action ID
+  WORKFLOW_ABORT = 8; # WORKFLOW_ABORT type action ID
+  DEFAULT_BITSTREAM_READ = 9; # DEFAULT_BITSREAM_READ type action ID
+  DEFAULT_ITEM_READ = 10; # DEFAULT_ITEM_READ type action ID
+  ADMIN = 11; # ADMIN type action ID
 
-  
   ##
-  # returns nil or the org.dspace.content.Community object with the given id
-  #
-  # id must be an integer
+  # Return the corresponding type string for an object id
+  # 
+  # @param obj_type_id [Integer] integer 0-7
+  # @return [String] the name of the object
   def self.typeStr(obj_type_id)
     return org.dspace.core.Constants.typeText[obj_type_id].capitalize
   end
 
   ##
-  # return String for given action_id
+  # Return the corresponding type string for an action id
+  # 
+  # @param action_id [Integer] integer 0-11
+  # @return [String] the name of the action
   def self.actionStr(action_id)
       return org.dspace.core.Constants.actionText[action_id]
   end

@@ -5,28 +5,40 @@ class DEPerson
   include DDSpaceObject
 
   ##
-  # return array of all org.dspace.eperson.EPerson objects
+  # Collect all Eperson objects from Dspace context
+  # 
+  # @return [Array<org.dspace.eperson.Eperson>]
   def self.all()
     java_import org.dspace.eperson.EPerson;
     return EPerson.findAll(DSpace.context, 1)
   end
 
   ##
-  # returns nil or the org.dspace.eperson.EPerson object with the given netid, email, or id
-  # netid_or_email: must be a string or integer
+  # Find the EPerson object from netid, email, or id
+  #
+  # @param netid_email_or_id [String, Integer] the netid (String), email 
+  #   (String), or id (Integer) to search with
+  # @return [org.dspace.eperson.EPerson, nil] the corresponding object or nil if
+  #   it could not be found
   def self.find(netid_email_or_id)
     java_import org.dspace.eperson.EPerson;
     raise "must give a netid_or_email value" unless netid_email_or_id
     if netid_email_or_id.is_a? String then
+      # ?? these functions are elsewhere
       return EPerson.findByNetid(DSpace.context, netid_email_or_id) || EPerson.findByEmail(DSpace.context, netid_email_or_id)
     end
     return EPerson.find(DSpace.context, netid_email_or_id)
   end
 
   ##
-  # create an org.dspace.eperson.EPerson with the given netid, name and email
-  #
-  # the EPerson is not committed to the database
+  # Create an org.dspace.eperson.EPerson with the given netid, name and email.
+  #   The EPerson is not committed to the database.
+  # 
+  # @param netid [String] institutional netid
+  # @param first [String] first name
+  # @param last [String] last name
+  # @param email [String] email address
+  # @return [org.dspace.eperson.EPerson] the newly created person
   def self.create(netid, first, last, email)
     java_import org.dspace.eperson.EPerson;
     raise "must give a netid value" unless netid
@@ -46,14 +58,18 @@ class DEPerson
   end
 
   ##
-  # return all groups where this user is a member
+  # Return all groups where this user is a member
+  # 
+  # @return [Array<org.dspace.eperson.Group>] Array of groups
   def groups
     java_import org.dspace.eperson.Group;
     return Group.allMemberGroups(DSpace.context, @obj);
   end
 
   ##
-  # convert to string
+  # View string representation
+  # 
+  # @return [String] person object represented as a string
   def inspect
     return "nil" if @obj.nil?
     describe = @obj.getNetid || @obj.getEmail || @obj.getID

@@ -5,14 +5,18 @@ class DItem
   include DDSpaceObject
 
   ##
-  # return org.dspace.content.ItemIterator for all Items
+  # Iterate through all Items in Dspace context
+  # 
+  # @return [org.dspace.content.ItemIterator<org.dspace.content.Item>] iterator
   def self.iter
     java_import org.dspace.content.Item;
     Item.findAll(DSpace.context);
   end
 
   ##
-  # return array of all archived org.dspace.content.Item objects
+  # Collect array of all archived org.dspace.content.Item objects
+
+  # @return [Array<org.dspace.content.Item>] array of Items
   def self.all()
     java_import org.dspace.content.Item;
     list, stp = [], iter
@@ -23,9 +27,11 @@ class DItem
   end
 
   ##
-  # returns nil or the org.dspace.content.Item object with the given id
+  # Get corresponding Item object from a given id
   #
-  # id must be an integer
+  # @param id [Integer] the Item id
+  # @return [nil, org.dspace.content.Item] either the corresponding 
+  #   collection object or nil if it couldn't be found.
   def self.find(id)
     java_import org.dspace.content.Item;
     return Item.find(DSpace.context, id)
@@ -34,7 +40,9 @@ class DItem
   ##
   # returns [] if restrict_to_dso is nil or all items that are contained in the given restrict_to_dso
   #
-  # restrict_to_dso must be nil, or an instance of org.dspace.content.Item, Collection, or Community
+  # @param restrict_to_dso [nil, org.dspace.content.Item, 
+  #   org.dspace.content.Collection, org.dspace.content.Community] restrictions
+  #   on search
   def self.inside(restrict_to_dso)
     java_import org.dspace.storage.rdbms.DatabaseManager
     java_import org.dspace.storage.rdbms.TableRow
@@ -63,7 +71,10 @@ class DItem
   end
 
   ##
-  # returns the bitstreams in the given bundle
+  # Get the bitstreams in the given bundle.
+  # 
+  # @param bundle [String] bundle to search; if nil, get all.
+  # @return [Array<org.dspace.content.Bitstream>] All bitstream 
   def bitstreams(bundle = "ORIGINAL")
     bundles = bundle.nil? ? @obj.getBundles : @obj.getBundles(bundle)
     bits = []
@@ -74,9 +85,13 @@ class DItem
   end
 
   ##
-  # creata a org.dspace.content.Item with the given metadata in the given collection
+  # Creata a org.dspace.content.Item with the given metadata in the given 
+  #   collection.
   #
-  # metadata_hash use keys like dc.contributir.author and single string or arrays of values
+  # @param collection [org.dspace.content.Collection] Collection in which to 
+  #   place the Item.
+  # @param metadata_hash [Hash] Item's metadata. (contains keys like 
+  #   dc.contributir.author and single string or arrays of values)
   def self.install(collection, metadata_hash)
     java_import org.dspace.content.InstallItem;
     java_import org.dspace.content.WorkspaceItem;
