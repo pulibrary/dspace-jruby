@@ -1,14 +1,15 @@
 require 'json'
 
 ##
-# This module contains methods to be included by classes that wrap objects 
-# that derive from org.dspace.content.DSpaceObject 
+# This module contains methods to be included by classes that wrap objects
+# that derive from org.dspace.content.DSpaceObject
+# @see https://github.com/DSpace/DSpace/blob/dspace-5.3/dspace-api/src/main/java/org/dspace/content/MetadataSchema.java
 module DDSpaceObject
 
   ##
   # Collect all parents, grandparents, etc. from Dspace object
-  # 
-  # @return [Array<DSO>] All parent objects 
+  #
+  # @return [Array<DSO>] All parent objects
   def parents
     moms = [];
     p = @obj.getParentObject()
@@ -36,7 +37,7 @@ module DDSpaceObject
 
   ##
   # Collect all the policies from Dspace object
-  # 
+  #
   # @return [Array<Hash>] an array of policies, defined by Action, Eperson, and Group
   def policies()
     java_import org.dspace.authorize.AuthorizeManager
@@ -53,7 +54,7 @@ module DDSpaceObject
 
   ##
   # Collect all metadata from Dspace object
-  # 
+  #
   # @return [Array<DMetadataField, String>] Metadata object and metadata name.
   def getMetaDataValues()
     java_import org.dspace.content.MetadataSchema
@@ -74,4 +75,3 @@ module DDSpaceObject
   end
 
 end
-

@@ -1,12 +1,13 @@
 ##
 # This class wraps an org.dspace.content.Community object
+# @see https://github.com/DSpace/DSpace/blob/dspace-5.3/dspace-api/src/main/java/org/dspace/content/Community.java
 class DCommunity
   include DSO
   include DDSpaceObject
 
   ##
   # Collect all Community objects from Dspace context
-  # 
+  #
   # @return [Array<org.dspace.content.Community>]
   def self.all()
     java_import org.dspace.content.Community;
@@ -17,7 +18,7 @@ class DCommunity
   # Get corresponding Community object from a given id
   #
   # @param id [Integer] the Community id
-  # @return [nil, org.dspace.content.Community] either the corresponding 
+  # @return [nil, org.dspace.content.Community] either the corresponding
   #   Community object or nil if it couldn't be found.
   def self.find(id)
     java_import org.dspace.content.Community;
@@ -25,7 +26,7 @@ class DCommunity
   end
 
   ##
-  # Create and return org.dspace.content.Community with given name in the given 
+  # Create and return org.dspace.content.Community with given name in the given
   #   community
   #
   # @param name [String] the name of the new Community
@@ -37,11 +38,8 @@ class DCommunity
     return comm
   end
 
-  # ??
-  ##
-  # Get collections within community.
-  # 
-  # @return [Array<org.dspace.content.Collection>]
+  # Retrieve all child Collections and Collections within Sub-Communities for this object
+  # @return [Array<org.dspace.context.Collections>]
   def getCollections
      return DCommunity.getCollections(self.dso)
   end
