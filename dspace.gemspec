@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = "jrdspace"
   spec.version       = DSpace::VERSION
   spec.authors       = ["Monika Mevenkamp"]
-  spec.email         = ["monikam@princeton.edu"]
+  spec.email         = ["dspadmin@princeton.edu"]
 
   spec.summary       =  %q{Jruby classes that interact with the dspace-api Java classes - v5}
   spec.description   =  %q{jrdspace enables scripting of the dspace-api Java objects in a DSpace installation; it includes an interactive console}
