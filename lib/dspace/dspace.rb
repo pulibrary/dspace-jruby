@@ -282,6 +282,7 @@ module DSpace
 
     # Accessor for the DSpace installation configuration file
     # @return [String]
+    #
     def dspace_cfg
       @dspace_cfg || raise('dspace.cfg is undefined');
     end
