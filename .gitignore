@@ -1,3 +1,6 @@
 jrdspace-*.gem
 .yardoc/
 doc/
+.bundle/
+vendor/
+*/.DS_Store
