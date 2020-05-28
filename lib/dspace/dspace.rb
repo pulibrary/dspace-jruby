@@ -76,11 +76,14 @@ module DSpace
     return @@config.context_renew
   end
 
-  # Sets the current user for this session of working with the DSpace kernel
+  # Sets the current user for this session of working with the DSpace kernel. Raise
+  #   error if person does not exist.
   # @note this is necessary in order to provide admin. access for modifying DSpace Objects
   # @param [String] netid the institutional NetID used to find the user account for the login
   def self.login(netid)
-    self.context.setCurrentUser(DEPerson.find(netid))
+    person = DEPerson.find(netid)
+    raise "person does not exist" if person.nil?
+    self.context.setCurrentUser(person)
     return nil
   end
 
@@ -109,7 +112,7 @@ module DSpace
   end
 
   # Method for retrieving a DSpace object by the resource type and internal ID
-  # @param type_id_or_handle_or_title [String]
+  # @param type_str_or_int [String]
   # @param identifier [String]
   # @return [org.dspace.content.DSpaceObject]
   # @example
