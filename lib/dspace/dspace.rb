@@ -289,6 +289,8 @@ module DSpace
 
     # Accessor for the DSpace kernel context object
     # @return [org.dspace.core.Context]
+    # TODO: Either find the reasoning behind including init in this accessor
+    #   or separate out functionality
     def context
       init
       return @context
