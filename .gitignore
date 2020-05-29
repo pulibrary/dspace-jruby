@@ -3,5 +3,5 @@ jrdspace-*.gem
 doc/
 .bundle/
 vendor/
-*/.DS_Store
+*/**/.DS_Store
 spec/failures.txt

@@ -36,4 +36,40 @@ describe DSpace::Config do
     #   end
     # end
   end
+
+  describe '#dspace_dir' do
+  # Accessor for the DSpace installation directory
+  # @return [String]
+  end
+
+  describe '#dspace_cfg' do
+  # Accessor for the DSpace installation configuration file
+  # @return [String]
+  #
+  end
+
+  describe '#context' do
+  # Accessor for the DSpace kernel context object
+  # @return [org.dspace.core.Context]
+  # TODO: Either find the reasoning behind including init in this accessor
+  #   or separate out functionality
+  end
+
+  describe '#context_renew' do
+  # This rebuilds the Context object for the DSpace kernel
+  # @return [org.dspace.core.Context]
+  end
+
+  describe '#init' do
+  # Builds the org.dspace.core.Context Class
+  # @see https://github.com/DSpace/DSpace/blob/dspace-5.3/dspace-api/src/main/java/org/dspace/core/Context.java
+  # @return [org.dspace.core.Context]
+  end
+
+  describe '#print' do
+  # Print to STDOUT the current database connection information
+  end
+
+
+
 end
