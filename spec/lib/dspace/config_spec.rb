@@ -1,4 +1,4 @@
-require_relative '../../spec_helper'
+# require_relative '../../spec_helper'
 
 # The dspace/dspace.rb contains quite a few technical errors that require serious
 #   debugging. See dspace_spec.rb for details.

@@ -4,3 +4,4 @@ doc/
 .bundle/
 vendor/
 */.DS_Store
+spec/failures.txt

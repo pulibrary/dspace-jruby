@@ -10,6 +10,10 @@ RSpec.configure do |config|
   config.mock_with :rspec do |mocks|
     mocks.verify_partial_doubles = true
   end
+
+  config.filter_run_when_matching :focus
+  config.example_status_persistence_file_path = 'spec/failures.txt'
 end
 
 DSpace.load
+DSpace.login('admin@localhost')
