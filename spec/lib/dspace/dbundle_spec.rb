@@ -1,5 +1,5 @@
-describe DBundle
-  describe '.find'
+describe DBundle do
+  describe '.find' do
   ##
   # Get corresponding Bundle object from a given id
   #
