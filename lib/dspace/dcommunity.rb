@@ -29,9 +29,11 @@ class DCommunity
   # Create and return org.dspace.content.Community with given name in the given
   #   community
   #
+  # TODO: There is no way to create a Community within another Community
   # @param name [String] the name of the new Community
   # @return [org.dspace.content.Community] the newly created Community
   def self.create(name)
+    java_import org.dspace.content.Community;
     comm = Community.create(nil, DSpace.context)
     comm.setMetadata("name", name)
     comm.update

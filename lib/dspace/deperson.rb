@@ -39,6 +39,7 @@ class DEPerson
   # @param last [String] last name
   # @param email [String] email address
   # @return [org.dspace.eperson.EPerson] the newly created person
+  # TODO: create -> init
   def self.create(netid, first, last, email)
     java_import org.dspace.eperson.EPerson;
     raise "must give a netid value" unless netid
@@ -70,6 +71,8 @@ class DEPerson
   # View string representation
   # 
   # @return [String] person object represented as a string
+  # TODO: "inspect" is already part of DSO, so perhaps change that
+  #   to reflect this functionality and remove this.
   def inspect
     return "nil" if @obj.nil?
     describe = @obj.getNetid || @obj.getEmail || @obj.getID

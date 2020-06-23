@@ -13,7 +13,7 @@ class DGroup
   ANONYMOUS_ID = 0
 
   ##
-  # Collect all Eperson objects from Dspace context
+  # Collect all Group objects from Dspace context
   # 
   # @return [Array<org.dspace.eperson.Group>]
   def self.all

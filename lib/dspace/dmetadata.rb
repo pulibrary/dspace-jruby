@@ -14,7 +14,7 @@ class DMetadataSchema
   end
 
   ##
-  # Get all MetaDatafields within Dspace context
+  # Get all MetaDatafields within a schema
   #
   # @return [Array<org.dspace.content.MetadataField>] All fields
   def fields
