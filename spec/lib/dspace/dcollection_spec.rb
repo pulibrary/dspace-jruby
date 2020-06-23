@@ -1,36 +1,54 @@
 describe DCollection do
+  subject { described_class.create('Junior Papers', DCommunity.all()[0]) }
+
+  before do
+    DSpace.login('admin@localhost')
+    communities = [DCommunity.create('Physics'), DCommunity.create('Music')]
+    communities.each do |com|
+      ['Dissertations', 'Theses', 'Faculty Papers'].each do |col|
+        col_obj = DCollection.create(col, com)
+        metadata = Hash.new
+        metadata['dc.contributor.author'] = ["Einstein"]
+        metadata['dc.type'] = 'Article'
+        DItem.install(col_obj, metadata)
+      end
+    end
+  end
+
+  after do 
+    DSpace.context_renew
+  end
 
   describe '.all' do
-  ##
-  # Collect all Collection objects from Dspace context
-  # 
-  # @return [Array<org.dspace.content.Collection>] all Collections
+    it 'retrieves all collections within context' do
+      all_cols = DCollection.all
+      expect(all_cols.length).to eq 6
+      expect(all_cols).to include Java::OrgDspaceContent::Collection
+    end
   end
 
   describe '.find' do
-##
-  # Get corresponding Collection object from a given id
-  #
-  # @param id [Integer] the Collection id
-  # @return [nil, org.dspace.content.Collection] either the corresponding 
-  #   collection object or nil if it couldn't be found.
+    it 'gets collection by id' do
+      expect(DCollection.find(subject.id)).to eq subject
+    end
+
+    it 'returns nil if collection cannot be found' do
+      expect(DCollection.find 99999).to be_nil
+    end
   end
 
   describe '.create' do
-  ##
-  # Create and return org.dspace.content.Collection with given name in the 
-  #   given community
-  #
-  # @param name [String] the name of the new collection
-  # @param community [org.dspace.content.Communiy] the community the collection 
-  #   should be placed within
-  # @return [org.dspace.content.Collection] the newly created collection
+    it 'creates a java collection' do
+      col = DCollection.create('test-collection', DCommunity.all()[0])
+      expect(col).to be_a Java::OrgDspaceContent::Collection
+    end
   end
 
   describe '#items' do
-  ##
-  # Return all items listed by the dspace item iterator
-  # 
-  # @return [Array<org.dspace.content.Item>] an array of Item objects
+    it 'returns an appropriately sized array of Item objects' do
+      items = DSpace.create(DCollection.all[0]).items
+      expect(items.length).to eq 1
+      expect(items).to include Java::OrgDspaceContent::Item
+    end
   end
 end

@@ -1,18 +1,13 @@
 describe DConstants do
   describe '.typeStr' do
-  ##
-  # Return the corresponding type string for an object id
-  # 
-  # @param obj_type_id [Integer] integer 0-7
-  # @return [String] the name of the object
+    it 'returns the corresponding type string for an object id' do
+      expect(DConstants.typeStr(1)).to eq('Bundle')
+    end
   end
 
   describe '.actionStr' do
-  ##
-  # Return the corresponding type string for an action id
-  # 
-  # @param action_id [Integer] integer 0-11
-  # @return [String] the name of the action
+    it 'Return the corresponding type string for an action id' do
+      expect(DConstants.actionStr(1)).to eq('WRITE')
+    end
   end
-
 end

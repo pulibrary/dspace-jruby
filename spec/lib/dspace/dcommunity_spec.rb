@@ -1,38 +1,55 @@
 describe DCommunity do
+  subject { described_class.create('Classics') }
+
+  before do
+    DSpace.login('admin@localhost')
+    communities = [DCommunity.create('Physics'), DCommunity.create('Music')]
+    communities.each do |com|
+      ['Dissertations', 'Theses', 'Faculty Papers'].each do |col|
+        DCollection.create(col, com)
+      end
+    end
+  end
+
+  after do 
+    DSpace.context_renew
+  end
+
   describe '.all' do
-  ##
-  # Collect all Community objects from Dspace context
-  #
-  # @return [Array<org.dspace.content.Community>]
+    it 'returns all communities in the contest' do
+      expect(DCommunity.all().length).to eq(2)
+    end
   end
 
   describe '.find' do
-  ##
-  # Get corresponding Community object from a given id
-  #
-  # @param id [Integer] the Community id
-  # @return [nil, org.dspace.content.Community] either the corresponding
-  #   Community object or nil if it couldn't be found.
+    it 'gets community by id' do
+      DCommunity.find(subject.id) === subject
+    end
+
+    it 'returns nil if community cannot be found' do
+      expect(DCommunity.find(99999)).to be_nil
+    end
   end
 
   describe '.create' do
-   ##
-  # Create and return org.dspace.content.Community with given name in the given
-  #   community
-  #
-  # @param name [String] the name of the new Community
-  # @return [org.dspace.content.Community] the newly created Community
+    it 'creates a java community' do
+      expect(DCommunity.create('test')).to be_a(Java::OrgDspaceContent::Community)
+    end
   end
 
   describe '#getCollections' do
-  # Retrieve all child Collections and Collections within Sub-Communities for this object
-  # @return [Array<org.dspace.context.Collections>]
+    it 'get collections from community' do
+      com = DCommunity.all()[0]
+      expect(DSpace.create(com).getCollections.length).to eq(3)
+    end
   end
 
   describe '.getCollections' do
-  # Get all collections from within given community and subcommunities
-  #
-  # @param com [org.dspace.content.Community]
-  # @return [Array<org.dspace.content.Collection>]
+    # NOTE: Unable to place communities within communities, so full functionality
+    #   cannot be tested
+    it 'get all collections from within given community' do
+      com = DCommunity.all()[0]
+      expect(DCommunity.getCollections(com).length).to eq(3)
+    end
   end
 end

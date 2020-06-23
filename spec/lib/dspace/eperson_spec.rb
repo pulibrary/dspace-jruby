@@ -1,60 +1,74 @@
 # require_relative '../../spec_helper'
 
 describe DEPerson do 
-  subject { described_class.new('readyfreddie', 'Freddie', 'Mercury', 'readyfreddie@cambridge.uk') }
+  subject { described_class.create('readyfreddie', 'Freddie', 'Mercury', 'readyfreddie@cambridge.uk') }
 
   before do
-    DEPerson.create('jsbach', 'Johann', 'Bach', 'jsbach@leipzig.de')
-    DEPerson.create('mangelou', 'Maya', 'Angelou', 'mangelou@gmail.com')
-    DEPerson.create('jsteinbeck', 'John', 'Steinbeck', 'jsteinbeck@stanford.edu')
+    DSpace.login('admin@localhost')
+    bach = DEPerson.create('jsbach', 'Johann', 'Bach', 'jsbach@leipzig.de')
+    angelou = DEPerson.create('mangelou', 'Maya', 'Angelou', 'mangelou@gmail.com')
+    steinbeck = DEPerson.create('jsteinbeck', 'John', 'Steinbeck', 'jsteinbeck@stanford.edu')
+    writers = DSpace.create(DGroup.find_or_create('writers'))
+    musicians = DSpace.create(DGroup.find_or_create('musicians'))
+    writers.addMember(steinbeck)
+    writers.addMember(angelou)
+    musicians.addMember(angelou)
+    musicians.addMember(bach)
   end
 
   after do 
     DSpace.context_renew
   end
-  
+
   describe '.all' do
     it 'returns all EPerson objects from context' do 
       people = DEPerson.all()
-      names = people.collect {|x| x.lastName }
+      
       expect(people).not_to be_nil
-      expect(people).not_to be_empty
-      expect(names).to include('Bach')
+      expect(people.length).to eq(4)
+
+      names = people.collect {|x| x.lastName }
+      expect(names).to include 'Bach'
     end
   end
 
   describe '.find' do 
-# Find the EPerson object from netid, email, or id
-  #
-  # @param netid_email_or_id [String, Integer] the netid (String), email 
-  #   (String), or id (Integer) to search with
-  # @return [org.dspace.eperson.EPerson, nil] the corresponding object or nil if
-  #   it could not be found
+    it 'returns nil if person is not found' do
+      cant_find = DEPerson.find('Waldo')
+      expect(cant_find).to be_nil
+    end
+
+    it 'returns a Java EPerson object' do
+      searched = DEPerson.find(subject.email)
+      expect(searched ).to be_a Java::OrgDspaceEperson::EPerson
+    end
+    
+    it 'returns the object of the corresponding person' do
+      searched = DEPerson.find(subject.email)
+      expect(searched.lastName).to eq 'Mercury'
+    end
   end
 
   describe '.create' do 
-# Create an org.dspace.eperson.EPerson with the given netid, name and email.
-  #   The EPerson is not committed to the database.
-  # 
-  # @param netid [String] institutional netid
-  # @param first [String] first name
-  # @param last [String] last name
-  # @param email [String] email address
-  # @return [org.dspace.eperson.EPerson] the newly created person
-
+    it 'throws error if netid is already in use' do
+      expect { DEPerson.create('jsbach', 'Johann', 'Bach', 'jsbach@leipzig.de') }.to raise_error
+    end
   end
 
-  describe '#groups' do 
-##
-  # Return all groups where this user is a member
-  # 
-  # @return [Array<org.dspace.eperson.Group>] Array of groups
+  describe '#groups' do
+    it 'returns the one group that the subject belongs to' do
+      expect(DSpace.create(subject).groups.length).to eq 1
+    end
+
+    it 'returns multiple groups when the person belongs to multiple' do
+      angelou = DSpace.create(DEPerson.find('mangelou@gmail.com'))
+      expect(angelou.groups.length).to eq 3
+    end
   end
 
-  describe '#inspect' do 
-  ##
-  # View string representation
-  # 
-  # @return [String] person object represented as a string
+  describe '#inspect' do
+    it 'returns a string' do
+      expect(DSpace.create(subject).inspect).to be_a String
+    end
   end
 end
