@@ -1,4 +1,5 @@
-# require_relative '../../spec_helper'
+# NOTE: Error-prone, and rspec makes testing against DSpace difficult, skipping 
+#   testing for now
 
 describe DSpace do
 

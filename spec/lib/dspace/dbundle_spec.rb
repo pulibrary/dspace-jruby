@@ -1,3 +1,5 @@
+# NOTE: Cannot test with current fixtures
+
 describe DBundle do
   describe '.find' do
   ##

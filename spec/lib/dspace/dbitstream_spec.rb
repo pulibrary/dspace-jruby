@@ -1,5 +1,5 @@
-###
-# This class wraps an org.dspace.content.Bitstream object
+# NOTE: Cannot test with current fixtures
+
 describe DBitstream do
   
   describe '.all' do
