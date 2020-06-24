@@ -13,13 +13,11 @@ describe DSpace do
       # TODO: Make sure DSpace is loaded properly for all tests
     end
 
-=begin
-The gem requires that DSpace.load work the first time. If an improper path is 
-fed into .load, the user will need to restart the entire environment. Not all 
-configurations and variables are reset when using .load more than once, and
-.reload does not seem to work at all. Significant debugging is required to 
-achieve the desired functionality.
-=end
+    # The gem requires that DSpace.load work the first time. If an improper path is 
+    # fed into .load, the user will need to restart the entire environment. Not all 
+    # configurations and variables are reset when using .load more than once, and
+    # .reload does not seem to work at all. Significant debugging is required to 
+    # achieve the desired functionality.
 
     it 'loads the DSpace kernel for the API' do
       dspace_dir_path = '/dspace'
