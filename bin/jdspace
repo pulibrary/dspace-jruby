@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export DSPACE_JRUBY_DIR=$HOME/pulibrary-src/dspace-jruby
+export DSPACE_CLI_DIR=$HOME/pulibrary-src/dspace-cli
+/usr/bin/env jruby -I $DSPACE_JRUBY_DIR/lib -I $DSPACE_CLI_DIR/ $*

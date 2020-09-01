@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       =  %q{Jruby classes that interact with the dspace-api Java classes - v5}
   spec.description   =  %q{jrdspace enables scripting of the dspace-api Java objects in a DSpace installation; it includes an interactive console}
-  spec.homepage      = "https://github.com/akinom/dspace-jruby"
+  spec.homepage      = "https://github.com/pulibrary/dspace-jruby"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
@@ -22,6 +22,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency  'jar'
   spec.add_dependency  'json'
 
-  spec.add_development_dependency "bundler", "~> 1.10"
-  spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "bundler", "~> 2.1"
+  spec.add_development_dependency "rake", "~> 13.0"
 end

@@ -9,18 +9,18 @@ GEM
   remote: https://rubygems.org/
   specs:
     jar (0.0.1)
-    json (2.3.0-java)
-    rake (10.4.2)
+    json (2.3.1-java)
+    rake (13.0.1)
     yard (0.9.25)
 
 PLATFORMS
   java
 
 DEPENDENCIES
-  bundler (~> 1.10)
+  bundler (~> 2.1)
   jrdspace!
-  rake (~> 10.0)
+  rake (~> 13.0)
   yard
 
 BUNDLED WITH
-   1.10.6
+   2.1.4
