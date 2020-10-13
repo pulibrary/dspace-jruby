@@ -14,6 +14,9 @@ module DSpace
     autoload(:Bitstream, File.join(File.dirname(__FILE__), 'core', 'bitstream'))
     autoload(:Bundle, File.join(File.dirname(__FILE__), 'core', 'bundle'))
     autoload(:Work, File.join(File.dirname(__FILE__), 'core', 'work'))
-    autoload(:Metadata, File.join(File.dirname(__FILE__), 'core', 'metadata'))
+    autoload(:WorkflowItem, File.join(File.dirname(__FILE__), 'core', 'workflow_item'))
+    autoload(:WorkspaceItem, File.join(File.dirname(__FILE__), 'core', 'workspace_item'))
+    autoload(:MetadataField, File.join(File.dirname(__FILE__), 'core', 'metadata_field'))
+    autoload(:MetadataSchema, File.join(File.dirname(__FILE__), 'core', 'metadata_schema'))
   end
 end

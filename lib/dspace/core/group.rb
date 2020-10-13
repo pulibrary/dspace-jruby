@@ -18,7 +18,9 @@ module DSpace
       # id of anonymous user group
       ANONYMOUS_ID = 0
 
-      def self.model_class; end
+      def self.model_class
+        org.dspace.eperson.Group
+      end
 
       ##
       # Collect all Eperson objects from Dspace context

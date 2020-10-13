@@ -14,6 +14,10 @@ module DSpace
       @kernel = nil
     end
 
+    def load_jar_files
+      @loaded_jar_files ||= @dspace_jars.map { |jar_file| require(jar_file) }
+    end
+
     # Accessor for the DSpace installation directory
     # @return [String]
     def dspace_dir
@@ -46,9 +50,9 @@ module DSpace
     def init
       if @context.nil?
         puts 'Loading jars'
-        @dspace_jars.each do |jar|
-          require jar
-        end
+
+        load_jar_files
+
         puts "Loading #{@dspace_cfg}"
         org.dspace.core.ConfigurationManager.load_config(@dspace_cfg)
 
