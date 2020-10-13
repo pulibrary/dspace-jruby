@@ -2,8 +2,8 @@
 
 # Module providing interfaces for interfacing with the DSpace kernel
 module DSpace
-  autoload(:Config, File.join(File.dirname(__FILE__), 'config'))
-  autoload(:Core, File.join(File.dirname(__FILE__), 'core'))
+  autoload(:Config, File.join(File.dirname(__FILE__), 'dspace', 'config'))
+  autoload(:Core, File.join(File.dirname(__FILE__), 'dspace', 'core'))
 
   ROOT = File.expand_path('..', __dir__)
   @@config = nil
@@ -90,7 +90,7 @@ module DSpace
   # @note this is necessary in order to provide admin. access for modifying DSpace Objects
   # @param [String] netid the institutional NetID used to find the user account for the login
   def self.login(netid)
-    person = DEPerson.find(netid)
+    person = Core::EPerson.find(netid)
     raise 'person does not exist' if person.nil?
 
     context.setCurrentUser(person)
