@@ -2,8 +2,8 @@
 
 # Module providing interfaces for interfacing with the DSpace kernel
 module DSpace
-  autoload(:Config, './config')
-  autoload(:Core, './core')
+  autoload(:Config, File.join(File.dirname(__FILE__), 'config'))
+  autoload(:Core, File.join(File.dirname(__FILE__), 'core'))
 
   ROOT = File.expand_path('..', __dir__)
   @@config = nil
