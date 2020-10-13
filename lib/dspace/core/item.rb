@@ -10,7 +10,9 @@ module DSpace
       include ObjectBehavior
       include DSpaceObjectBehavior
 
-      def self.model_class; end
+      def self.model_class
+        org.dspace.content.Item
+      end
 
       ##
       # Iterate through all Items in Dspace context

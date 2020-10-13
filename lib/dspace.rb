@@ -22,7 +22,7 @@ module DSpace
       rescue StandardError
         raise "no such object type #{type_str_or_int}"
       end
-      klassName = Constants.typeStr(id)
+      klassName = Core::Constants.typeStr(id)
     end
 
     return 'EPerson' if klassName == 'EPerson'
@@ -212,7 +212,7 @@ module DSpace
   # @note if restrict_to_typ is not nil, this will restrict to results to the provided resource type
   def self.findByMetadataValue(fully_qualified_metadata_field, value_or_nil, restrict_to_type)
     java_import org.dspace.storage.rdbms.DatabaseManager
-    field = DMetadataField.find(fully_qualified_metadata_field)
+    field = Core::MetadataField.find(fully_qualified_metadata_field)
     raise "no such metadata field #{fully_qualified_metadata_field}" if field.nil?
 
     sql = 'SELECT MV.resource_id, MV.resource_type_id  FROM MetadataValue MV'

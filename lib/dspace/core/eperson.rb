@@ -11,7 +11,7 @@ module DSpace
       include DSpaceObjectBehavior
 
       def self.model_class
-        Java::OrgDspaceEperson::EPerson
+        org.dspace.eperson.EPerson
       end
 
       ##

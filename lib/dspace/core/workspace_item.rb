@@ -5,10 +5,12 @@ module DSpace
     ##
     # A class wrapper for org.dspace.workflow.WorkspaceItem
     class WorkspaceItem
-      java_import org.dspace.content.WorkspaceItem
+      java_import(org.dspace.content.WorkspaceItem)
       include ObjectBehavior
 
-      def self.model_class; end
+      def self.model_class
+        org.dspace.content.WorkspaceItem
+      end
 
       ##
       # Find org.dspace.workflow.WorkspaceItem from an id
