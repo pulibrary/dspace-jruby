@@ -71,7 +71,7 @@ module DSpace
       # @return [Array<org.dspace.eperson.Group, org.dspace.eperson.EPerson>]
       #   array of members, either Epersons or Groups
       def members
-        @obj.getMemberGroups.collect { |p| p } + @obj.getMembers.collect { |p| p }
+        @model.getMemberGroups.collect { |p| p } + @model.getMembers.collect { |p| p }
       end
 
       ##
@@ -83,9 +83,9 @@ module DSpace
       def addMember(group_or_eperson)
         raise 'must give non nil group_or_eperson' if group_or_eperson.nil?
 
-        @obj.addMember(group_or_eperson)
-        @obj.update
-        @obj
+        @model.addMember(group_or_eperson)
+        @model.update
+        @model
       end
 
       ##
@@ -93,9 +93,13 @@ module DSpace
       #
       # @return [String] string representation
       def inspect
-        return 'nil' if @obj.nil?
+        return 'nil' if @model.nil?
 
-        "#<#{self.class.name}:#{@obj.getName}>"
+        "#<#{self.class.name}:#{@model.getName}>"
+      end
+
+      def name
+        @model.getName
       end
     end
   end

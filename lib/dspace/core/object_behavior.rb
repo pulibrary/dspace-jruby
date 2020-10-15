@@ -10,10 +10,7 @@ module DSpace
       # @see https://github.com/DSpace/DSpace/blob/dspace-5.5/dspace-api/src/main/java/org/dspace/content/DSpaceObject.java
       def initialize(dobj)
         @obj = dobj
-        if dobj
-          myname = self.class.name
-          raise "can't create #{myname} object from #{@obj}" if myname[1..-1] != @obj.getClass.getName.split('.')[-1]
-        end
+        @model = @obj
       end
 
       # Accessor for the decorated org.dspace.content.DSpaceObject

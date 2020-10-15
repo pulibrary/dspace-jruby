@@ -77,7 +77,7 @@ module DSpace
       #
       # @return [Array<org.dspace.eperson.Group>] Array of groups
       def groups
-        Group.model_class.allMemberGroups(DSpace.context, @obj)
+        Group.model_class.allMemberGroups(DSpace.context, @model)
       end
 
       ##
@@ -85,11 +85,15 @@ module DSpace
       #
       # @return [String] person object represented as a string
       def inspect
-        return 'nil' if @obj.nil?
+        return 'nil' if @model.nil?
 
-        describe = @obj.getNetid || @obj.getEmail || @obj.getID
+        describe = @model.getNetid || @model.getEmail || @model.getID
 
         "#<#{self.class.name}:#{describe}>"
+      end
+
+      def email
+        @model.getEmail
       end
     end
   end
