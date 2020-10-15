@@ -10,6 +10,8 @@ module DSpace
       include ObjectBehavior
       include DSpaceObjectBehavior
 
+      class NotFoundError < ::StandardError; end
+
       def self.model_class
         org.dspace.eperson.EPerson
       end
