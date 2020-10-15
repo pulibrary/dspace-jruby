@@ -5,8 +5,43 @@ module DSpace
   autoload(:Config, File.join(File.dirname(__FILE__), 'dspace', 'config'))
   autoload(:Core, File.join(File.dirname(__FILE__), 'dspace', 'core'))
 
-  ROOT = File.expand_path('..', __dir__)
+  DEFAULT_DSPACE_HOME = '/dspace'
+
+  @@root_path = nil
   @@config = nil
+
+  module Deprecation
+    def self.deprecation_horizon
+      '1.0.0'
+    end
+
+    def self.deprecated_method_warning(method_name, message = nil)
+      warning = "#{method_name} is deprecated and will be removed from #{name} #{deprecation_horizon}"
+      case message
+      when Symbol then "#{warning} (use #{message} instead)"
+      when String then "#{warning} (#{message})"
+      else warning
+      end
+    end
+
+    def self.warn_deprecated(method_name, message = nil, callstack = nil)
+      warning = deprecated_method_warning(method_name, message)
+      logger.warn(warning)
+    end
+  end
+  include(Deprecation)
+
+  def self.dspace_home
+    ENV['DSPACE_HOME'] || DEFAULT_DSPACE_HOME
+  end
+
+  def self.kernel_class
+
+  end
+
+  def self.kernel_constants_class
+    org.dspace.core.Constants
+  end
 
   # Retrieve the Class modeling the internal DSpace Object using a string or integer constant for the resource ID
   # @param type_str_or_int [String]
@@ -14,7 +49,7 @@ module DSpace
   #
   # @note type_str_or_int must be one of the following constant values: BITTREAM or EPERSON, or the corresponding string for these constants
   def self.objTypeStr(type_str_or_int)
-    if type_str_or_int.instance_of?(String) && Constants.typeText.find_index(type_str_or_int.upcase)
+    if type_str_or_int.instance_of?(String) && kernel_constants_class.typeText.find_index(type_str_or_int.upcase)
       klassName = type_str_or_int.capitalize
     else
       begin
@@ -22,6 +57,7 @@ module DSpace
       rescue StandardError
         raise "no such object type #{type_str_or_int}"
       end
+
       klassName = Core::Constants.typeStr(id)
     end
 
@@ -34,43 +70,54 @@ module DSpace
   # @param type_str_or_int [String]
   # @return [Integer]
   def self.objTypeId(type_str_or_int)
-    obj_typ = org.dspace.core.Constants.typeText.find_index objTypeStr(type_str_or_int).upcase
+    constant_value = objTypeStr(type_str_or_int).upcase
+    kernel_constants_class.typeText.find_index(constant_value)
+  end
+
+  def self.build_config(root_path:)
+    Config.new(root_path)
   end
 
   # Initialize the DSpace kernel by searching within directory for the DSpace installation
   # @param dspace_dir [String]
   # @note if dspace_dir is nil, this will use the value of the environment variable $DSPACE_HOME
   # @note if $DSPACE_HOME is undefined also, it will then default to '/dspace'
-  def self.load(dspace_dir = nil)
-    if @@config.nil?
-      @@config = Config.new(dspace_dir || ENV['DSPACE_HOME'] || '/dspace')
-      context # initialize context now
-      java_import org.dspace.handle.HandleManager
-      java_import org.dspace.core.Constants
-      java_import org.dspace.content.DSpaceObject
+  def self.bootstrap(dspace_root_path: nil)
+    if @@root_path.nil? || dspace_root_path != @@root_path
+      @@root_path = dspace_root_path || dspace_home
     end
 
-    @@config&.print
+    if @@config.nil?
+      @@config = build_config(root_path: @@root_path)
+    end
 
-    !@@config.nil?
+    @@config.init
+    @@config&.print
+    @@config
+  end
+
+  
+
+  def self.load(dspace_root_path: nil)
+    warn_deprecated('load', 'bootstrap')
+
+    bootstrap(dspace_root_path: dspace_root_path)
   end
 
   # Reinitialize the DSpace kernel by searching within directory for the DSpace installation
   # @param dspace_dir [String]
   # @note if dspace_dir is nil, this will use the value of the environment variable $DSPACE_HOME
   # @note if $DSPACE_HOME is undefined also, it will then default to '/dspace'
-  def self.reload(dspace_dir = nil)
+  def self.reload(dspace_root_path: nil)
     @@config = nil
-    load(dspace_dir)
+    bootstrap(dspace_root_path: dspace_root_path)
   end
 
   # Accesses the global context for interfacing with the DSpace kernel
   # @raise [StandardError]
   # @return [org.dspace.core.Context]
   def self.context
-    raise 'must call load to initialize' if @@config.nil?
-    raise 'should never happen' if @@config.context.nil?
-
+    bootstrap if @@config.nil?
     @@config.context
   end
 
@@ -79,8 +126,7 @@ module DSpace
   # @raise [StandardError]
   # @return [org.dspace.core.Context]
   def self.context_renew
-    raise 'must call load to initialize' if @@config.nil?
-    raise 'should never happen' if @@config.context.nil?
+    bootstrap if @@config.nil?
 
     @@config.context_renew
   end
@@ -91,10 +137,10 @@ module DSpace
   # @param [String] netid the institutional NetID used to find the user account for the login
   def self.login(netid)
     person = Core::EPerson.find(netid)
-    raise 'person does not exist' if person.nil?
+    raise Core::EPerson::NotFoundError(EPerson "#{netid} could not be found") if person.nil?
 
     context.setCurrentUser(person)
-    nil
+    context
   end
 
   # Commit changes to the database for the current DSpace installation
@@ -120,7 +166,7 @@ module DSpace
   # @return [String]
   # @see org.dspace.content.DSpaceObject#inspect
   def self.inspect(dso)
-    dso = DSpace.create(dso) if dso
+    dso = create(dso) if dso
     dso.inspect
   end
 
@@ -137,8 +183,8 @@ module DSpace
   # @note type_str_or_int must be be of the integer values BITTREAM and EPERSON, or the corresponding string
   # @note identifier must be an integer or string value uniquely identifying the object
   def self.find(type_str_or_int, identifier)
-    type_str = DSpace.objTypeStr(type_str_or_int)
-    type_id = DSpace.objTypeId(type_str)
+    type_str = objTypeStr(type_str_or_int)
+    type_id = objTypeId(type_str)
 
     klass_name = "DSpace::Core::#{type_str}"
     klass = Object.const_get(klass_name)
@@ -159,7 +205,7 @@ module DSpace
     # TODO: handle MetadataField string
     if type_id_or_handle_or_title.start_with? 'TITLE'
       str = type_id_or_handle_or_title[6..-1]
-      dsos = DSpace.findByMetadataValue('dc.title', str, DConstants::ITEM)
+      dsos = findByMetadataValue('dc.title', str, DConstants::ITEM)
       raise "multiple matches for #{type_id_or_handle_or_title}" if dsos.length > 1
 
       dsos[0]
@@ -169,7 +215,7 @@ module DSpace
         find(splits[0].upcase, splits[1])
       else
         java_import org.dspace.handle.HandleManager
-        HandleManager.resolve_to_object(DSpace.context, type_id_or_handle_or_title)
+        HandleManager.resolve_to_object(context, type_id_or_handle_or_title)
       end
     end
   end
@@ -178,7 +224,8 @@ module DSpace
   # @see https://github.com/DSpace/DSpace/blob/dspace-5.3/dspace-services/src/main/java/org/dspace/servicemanager/DSpaceServiceManager.java
   # @return [org.dspace.servicemanager.DSpaceServiceManager]
   def self.getServiceManager
-    org.dspace.utils.DSpace.new.getServiceManager
+    utils_helper = org.dspace.utils.DSpace.new
+    utils_helper.getServiceManager
   end
 
   # Access a service object registered with the DSpace kernel
@@ -220,9 +267,9 @@ module DSpace
     sql += " AND MV.resource_type_id = #{objTypeId(restrict_to_type)}" if restrict_to_type
     if !value_or_nil.nil?
       sql += ' AND MV.text_value LIKE ?'
-      tri = DatabaseManager.queryTable(DSpace.context, 'MetadataValue', sql, value_or_nil)
+      tri = DatabaseManager.queryTable(context, 'MetadataValue', sql, value_or_nil)
     else
-      tri = DatabaseManager.queryTable(DSpace.context, 'MetadataValue', sql)
+      tri = DatabaseManager.queryTable(context, 'MetadataValue', sql)
     end
 
     dsos = []
@@ -240,14 +287,14 @@ module DSpace
     java_import org.dspace.eperson.Group
     java_import org.dspace.storage.rdbms.DatabaseManager
 
-    group = DGroup.find(group_ref_or_name) if group_ref_or_name.is_a? String
+    group = Core::Group.find(group_ref_or_name) if group_ref_or_name.is_a? String
     raise 'must give valied group' if group.nil? || (!group.is_a? Java::OrgDspaceEperson::Group)
 
     sql = "SELECT RESOURCE_ID, RESOURCE_TYPE_ID FROM RESOURCEPOLICY WHERE EPERSONGROUP_ID = #{group.getID} "
     sql += "AND ACTION_ID = #{action_or_nil} " if action_or_nil
     sql += "AND RESOURCE_TYPE_ID = #{resource_type_or_nil} " if resource_type_or_nil
 
-    tri = DatabaseManager.queryTable(DSpace.context, 'MetadataValue', sql)
+    tri = DatabaseManager.queryTable(context, 'MetadataValue', sql)
     dsos = []
     while (iter = tri.next)
       dsos << find(iter.getIntColumn('resource_type_id'), iter.getIntColumn('resource_id'))

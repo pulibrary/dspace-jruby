@@ -3,6 +3,10 @@
 module DSpace
   # This models the configuration used by the DSpace kernel
   class Config
+    java_import(org.dspace.content.DSpaceObject)
+    java_import(org.dspace.core.Constants)
+    java_import(org.dspace.handle.HandleManager)
+
     # constructor
     # @param dspace_home [String] the path to the DSpace installation directory
     def initialize(dspace_home)
