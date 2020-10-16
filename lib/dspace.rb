@@ -18,9 +18,12 @@ module DSpace
     def self.deprecated_method_warning(method_name, message = nil)
       warning = "#{method_name} is deprecated and will be removed from #{name} #{deprecation_horizon}"
       case message
-      when Symbol then "#{warning} (use #{message} instead)"
-      when String then "#{warning} (#{message})"
-      else warning
+      when Symbol
+        "#{warning} (use #{message} instead)"
+      when String
+        "#{warning} (#{message})"
+      else
+        warning
       end
     end
 
@@ -35,10 +38,6 @@ module DSpace
     ENV['DSPACE_HOME'] || DEFAULT_DSPACE_HOME
   end
 
-  def self.kernel_class
-
-  end
-
   def self.kernel_constants_class
     org.dspace.core.Constants
   end
@@ -50,7 +49,7 @@ module DSpace
   # @note type_str_or_int must be one of the following constant values: BITTREAM or EPERSON, or the corresponding string for these constants
   def self.objTypeStr(type_str_or_int)
     if type_str_or_int.instance_of?(String) && kernel_constants_class.typeText.find_index(type_str_or_int.upcase)
-      klassName = type_str_or_int.capitalize
+      type_str_or_int.capitalize
     else
       begin
         id = Integer(type_str_or_int)
@@ -58,12 +57,8 @@ module DSpace
         raise "no such object type #{type_str_or_int}"
       end
 
-      klassName = Core::Constants.typeStr(id)
+      Core::Constants.typeStr(id)
     end
-
-    return 'EPerson' if klassName == 'EPerson'
-
-    klassName
   end
 
   # Convert a String to an internal DSpace constant for resolving resource type
@@ -334,6 +329,5 @@ module DSpace
         puts "#{klass.name}.#{mn} (#{plist.join(', ')})"
       end
     end
-    nil
   end
 end
