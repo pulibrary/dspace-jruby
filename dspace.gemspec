@@ -6,13 +6,13 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'dspace/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'jrdspace'
+  spec.name          = 'dspace-jruby'
   spec.version       = DSpace::VERSION
   spec.authors       = ['Monika Mevenkamp', 'Princeton University Library']
   spec.email         = ['dspadmin@princeton.edu']
 
-  spec.summary       =  'JRuby classes that interact with the dspace-api Java classes - v5'
-  spec.description   =  'jrdspace enables scripting of the dspace-api Java objects in a DSpace installation; it includes an interactive console'
+  spec.summary       =  'JRuby API which interacts with the DSpace API Java classes'
+  spec.description   =  'dspace-jruby enables scripting of the dspace-api Java objects in a DSpace installation'
   spec.homepage      = 'https://github.com/pulibrary/dspace-jruby'
   spec.license       = 'MIT'
 
@@ -21,7 +21,6 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency  'jar'
   spec.add_dependency  'json'
 
   spec.add_development_dependency 'bundler', '~> 2.1'
