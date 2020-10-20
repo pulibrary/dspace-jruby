@@ -3,7 +3,7 @@
 # Module providing interfaces for interfacing with the DSpace kernel
 module DSpace
   autoload(:Deprecation, File.join(File.dirname(__FILE__), 'dspace', 'deprecation'))
-  include(Deprecation)
+  extend(Deprecation)
 
   autoload(:Config, File.join(File.dirname(__FILE__), 'dspace', 'config'))
   autoload(:Core, File.join(File.dirname(__FILE__), 'dspace', 'core'))
