@@ -17,6 +17,13 @@ module DSpace
     ENV['DSPACE_HOME'] || DEFAULT_DSPACE_HOME
   end
 
+  def self.require_dspace_libraries
+    Dir[File.join(dspace_home, 'lib', '**', '*.jar')].each { |jar_path| require(jar_path) }
+  end
+
+  # This is needed in order to invoke any of these methods
+  require_dspace_libraries
+
   def self.kernel_constants_class
     org.dspace.core.Constants
   end
@@ -67,7 +74,8 @@ module DSpace
   end
 
   def self.load(dspace_root_path: nil)
-    warn_deprecated('load', 'bootstrap')
+    # I do not understand why this is failing on certain environments
+    # warn_deprecated('load', 'bootstrap')
 
     bootstrap(dspace_root_path: dspace_root_path)
   end
