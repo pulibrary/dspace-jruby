@@ -2,6 +2,9 @@
 
 # Module providing interfaces for interfacing with the DSpace kernel
 module DSpace
+  autoload(:Deprecation, File.join(File.dirname(__FILE__), 'dspace', 'deprecation'))
+  extend(Deprecation)
+
   autoload(:Config, File.join(File.dirname(__FILE__), 'dspace', 'config'))
   autoload(:Core, File.join(File.dirname(__FILE__), 'dspace', 'core'))
 
@@ -10,33 +13,16 @@ module DSpace
   @@root_path = nil
   @@config = nil
 
-  module Deprecation
-    def self.deprecation_horizon
-      '1.0.0'
-    end
-
-    def self.deprecated_method_warning(method_name, message = nil)
-      warning = "#{method_name} is deprecated and will be removed from #{name} #{deprecation_horizon}"
-      case message
-      when Symbol
-        "#{warning} (use #{message} instead)"
-      when String
-        "#{warning} (#{message})"
-      else
-        warning
-      end
-    end
-
-    def self.warn_deprecated(method_name, message = nil, callstack = nil)
-      warning = deprecated_method_warning(method_name, message)
-      logger.warn(warning)
-    end
-  end
-  include(Deprecation)
-
   def self.dspace_home
     ENV['DSPACE_HOME'] || DEFAULT_DSPACE_HOME
   end
+
+  def self.require_dspace_libraries
+    Dir[File.join(dspace_home, 'lib', '**', '*.jar')].each { |jar_path| require(jar_path) }
+  end
+
+  # This is needed in order to invoke any of these methods
+  require_dspace_libraries
 
   def self.kernel_constants_class
     org.dspace.core.Constants
@@ -78,23 +64,18 @@ module DSpace
   # @note if dspace_dir is nil, this will use the value of the environment variable $DSPACE_HOME
   # @note if $DSPACE_HOME is undefined also, it will then default to '/dspace'
   def self.bootstrap(dspace_root_path: nil)
-    if @@root_path.nil? || dspace_root_path != @@root_path
-      @@root_path = dspace_root_path || dspace_home
-    end
+    @@root_path = dspace_root_path || dspace_home if @@root_path.nil? || dspace_root_path != @@root_path
 
-    if @@config.nil?
-      @@config = build_config(root_path: @@root_path)
-    end
+    @@config = build_config(root_path: @@root_path) if @@config.nil?
 
     @@config.init
     @@config&.print
     @@config
   end
 
-  
-
   def self.load(dspace_root_path: nil)
-    warn_deprecated('load', 'bootstrap')
+    # I do not understand why this is failing on certain environments
+    # warn_deprecated('load', 'bootstrap')
 
     bootstrap(dspace_root_path: dspace_root_path)
   end
@@ -132,7 +113,7 @@ module DSpace
   # @param [String] netid the institutional NetID used to find the user account for the login
   def self.login(netid)
     person = Core::EPerson.find(netid)
-    raise Core::EPerson::NotFoundError(EPerson "#{netid} could not be found") if person.nil?
+    raise Core::EPerson::NotFoundError(EPerson("#{netid} could not be found")) if person.nil?
 
     context.setCurrentUser(person)
     context
