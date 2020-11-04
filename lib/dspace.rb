@@ -119,6 +119,10 @@ module DSpace
     context
   end
 
+  def self.current_user
+    context.getCurrentUser
+  end
+
   # Commit changes to the database for the current DSpace installation
   # @see Context.commit
   def self.commit
