@@ -30,6 +30,7 @@ module DSpace
           return [wi] if wi
         when DConstants::EPERSON
           wi = klass.findByEPerson(DSpace.context, obj)
+          return [wi] if wi
         end
 
         # return empty array if no matching workspace items

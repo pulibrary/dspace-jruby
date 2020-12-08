@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module DSpace
+  # Module containing the core API classes for interfacing with the DSpace Java API
   module Core
     autoload(:Config, File.join(File.dirname(__FILE__), 'core', 'config'))
     autoload(:Constants, File.join(File.dirname(__FILE__), 'core', 'constants'))

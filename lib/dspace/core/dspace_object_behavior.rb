@@ -2,6 +2,7 @@
 
 module DSpace
   module Core
+    # Module containing functionality shared between DSpaceObject child classes
     module DSpaceObjectBehavior
       # Collect all parents, grandparents, etc. from Dspace object
       #

@@ -20,6 +20,29 @@ jobs:
           paths:
             - vendor/bundle
 
+  lint:
+    working_directory: ~/dspace-jruby
+    docker:
+      - image: circleci/jruby:9.2.13-jdk11-node-browsers-legacy
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v2-dspace-jruby-{{ checksum "dspace.gemspec" }}-{{ checksum "Gemfile.lock" }}
+      - run:
+          name: Install bundler
+          command: gem install bundler -v '~> 2.1'
+      - run:
+          name: Install the dependencies
+          command: bundle install --path=vendor/bundle --jobs 4 --retry 3
+      - save_cache:
+          key: v2-dspace-jruby-{{ checksum "dspace.gemspec" }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+      - run:
+          name: Lint using Rubocop
+          command: bundle exec rubocop
+
   doc:
     working_directory: ~/dspace-jruby
     docker:
@@ -50,6 +73,9 @@ workflows:
   default:
     jobs:
       - build
+      - lint:
+          requires:
+            - build
       - doc:
           requires:
             - build

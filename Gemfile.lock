@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dspace-jruby (0.1.0)
+    dspace-jruby (0.1.0-universal-java-1.8)
       json
 
 GEM

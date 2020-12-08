@@ -50,12 +50,12 @@ module DSpace
       #
       # @param com [org.dspace.content.Community]
       # @return [Array<org.dspace.content.Collection>]
-      def self.getCollections(com)
+      def self.getCollections(comms)
         colls = []
-        com = [com] unless com.is_a? Array
-        com.each do |c|
-          colls += c.getCollections.collect { |c| c }
-          colls += getCollections(c.getSubcommunities.collect { |sc| sc })
+        comms = [comms] unless comms.is_a? Array
+        comms.each do |comm|
+          colls += comm.getCollections.collect { |coll| coll }
+          colls += getCollections(comm.getSubcommunities.collect { |sc| sc })
         end
         colls
       end

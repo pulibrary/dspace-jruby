@@ -2,6 +2,7 @@
 
 module DSpace
   module Core
+    # Module containing functionality shared between entities persisted in the DSpace kernel
     module ObjectBehavior
       # Instanciates a wrapper object for the given dobj, which must derive from
       #   org.dspace.content.DSpaceObject. The wrapper object's class must be

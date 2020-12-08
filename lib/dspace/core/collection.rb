@@ -2,6 +2,7 @@
 
 module DSpace
   module Core
+    # Models the Bundle Class within the DSpace API
     class Collection
       include ObjectBehavior
       include DSpaceObjectBehavior

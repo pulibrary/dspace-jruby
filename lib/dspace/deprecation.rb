@@ -1,6 +1,9 @@
-module DSpace
+# frozen_string_literal: true
+
+module DSpace # rubocop:disable Style/Documentation
+  # Module containing the functionality for issuing deprecation warnings
   module Deprecation
-    module ClassMethods
+    module ClassMethods # rubocop:disable Style/Documentation
       def deprecation_horizon
         '1.0.0'
       end

@@ -18,9 +18,11 @@ module DSpace
       @kernel = nil
     end
 
+    # rubocop:disable Naming/MemoizedInstanceVariableName
     def load_jar_files
       @loaded_jar_files ||= @dspace_jars.map { |jar_file| require(jar_file) }
     end
+    # rubocop:enable Naming/MemoizedInstanceVariableName
 
     # Accessor for the DSpace installation directory
     # @return [String]
@@ -52,23 +54,23 @@ module DSpace
     # @see https://github.com/DSpace/DSpace/blob/dspace-5.3/dspace-api/src/main/java/org/dspace/core/Context.java
     # @return [org.dspace.core.Context]
     def init
-      if @context.nil?
-        puts 'Loading jars'
+      return @context unless @context.nil?
 
-        load_jar_files
+      puts 'Loading jars'
 
-        puts "Loading #{@dspace_cfg}"
-        org.dspace.core.ConfigurationManager.load_config(@dspace_cfg)
+      load_jar_files
 
-        kernel_impl = org.dspace.servicemanager.DSpaceKernelInit.get_kernel(nil)
-        unless kernel_impl.is_running
-          puts 'Starting new DSpaceKernel'
-          kernel_impl.start(@dspace_dir)
-        end
-        @kernel = kernel_impl
+      puts "Loading #{@dspace_cfg}"
+      org.dspace.core.ConfigurationManager.load_config(@dspace_cfg)
 
-        @context = org.dspace.core.Context.new
+      kernel_impl = org.dspace.servicemanager.DSpaceKernelInit.get_kernel(nil)
+      unless kernel_impl.is_running
+        puts 'Starting new DSpaceKernel'
+        kernel_impl.start(@dspace_dir)
       end
+      @kernel = kernel_impl
+
+      @context = org.dspace.core.Context.new
     end
 
     # Print to STDOUT the current database connection information

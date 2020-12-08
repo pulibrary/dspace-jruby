@@ -18,7 +18,7 @@ module DSpace
   end
 
   def self.require_dspace_libraries
-    Dir[File.join(dspace_home, 'lib', '**', '*.jar')].each { |jar_path| require(jar_path) }
+    Dir[File.join(dspace_home, 'lib', '**', '*.jar')].sort.each { |jar_path| require(jar_path) }
   end
 
   # This is needed in order to invoke any of these methods
@@ -164,7 +164,6 @@ module DSpace
   # @note identifier must be an integer or string value uniquely identifying the object
   def self.find(type_str_or_int, identifier)
     type_str = objTypeStr(type_str_or_int)
-    type_id = objTypeId(type_str)
 
     klass_name = "DSpace::Core::#{type_str}"
     klass = Object.const_get(klass_name)

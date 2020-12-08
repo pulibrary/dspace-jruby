@@ -16,6 +16,9 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/pulibrary/dspace-jruby'
   spec.license       = 'MIT'
 
+  spec.required_ruby_version = '~> 2.5'
+  spec.platform = Gem::Platform.local
+
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = 'bin'
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
