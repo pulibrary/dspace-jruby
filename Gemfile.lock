@@ -1,15 +1,13 @@
 PATH
   remote: .
   specs:
-    jrdspace (0.1.0)
-      jar
+    dspace-jruby (0.1.0)
       json
 
 GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.1)
-    jar (0.0.1)
     json (2.3.1-java)
     parallel (1.19.2)
     parser (2.7.2.0)
@@ -37,7 +35,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 2.1)
-  jrdspace!
+  dspace-jruby!
   rubocop
   yard
 
