@@ -1,26 +1,81 @@
 version: 2.1
 jobs:
-  documentation:
+  build:
     working_directory: ~/dspace-jruby
-    machine:
-      image: ubuntu-1604:201903-01
+    docker:
+      - image: circleci/jruby:9.2.13-jdk11-node-browsers-legacy
     steps:
       - checkout
-      - run:
-          name: Set JRuby version to 9.1.7.0
-          command: |
-            rvm install jruby-9.1.7.0
-            echo . $(rvm jruby-9.1.7.0 do rvm env --path) >> $BASH_ENV
+      - restore_cache:
+          keys:
+            - v2-dspace-jruby-{{ checksum "dspace.gemspec" }}-{{ checksum "Gemfile.lock" }}
       - run:
           name: Install bundler
-          command: gem install -v 1.10.6 bundler
+          command: gem install bundler -v '~> 2.1'
       - run:
           name: Install the dependencies
-          command: bundle install
+          command: bundle install --path=vendor/bundle --jobs 4 --retry 3
+      - save_cache:
+          key: v2-dspace-jruby-{{ checksum "dspace.gemspec" }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+  lint:
+    working_directory: ~/dspace-jruby
+    docker:
+      - image: circleci/jruby:9.2.13-jdk11-node-browsers-legacy
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v2-dspace-jruby-{{ checksum "dspace.gemspec" }}-{{ checksum "Gemfile.lock" }}
+      - run:
+          name: Install bundler
+          command: gem install bundler -v '~> 2.1'
+      - run:
+          name: Install the dependencies
+          command: bundle install --path=vendor/bundle --jobs 4 --retry 3
+      - save_cache:
+          key: v2-dspace-jruby-{{ checksum "dspace.gemspec" }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+      - run:
+          name: Lint using Rubocop
+          command: bundle exec rubocop
+
+  doc:
+    working_directory: ~/dspace-jruby
+    docker:
+      - image: circleci/jruby:9.2.13-jdk11-node-browsers-legacy
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v2-dspace-jruby-{{ checksum "dspace.gemspec" }}-{{ checksum "Gemfile.lock" }}
+      - run:
+          name: Install bundler
+          command: gem install bundler -v '~> 2.1'
+      - run:
+          name: Install the dependencies
+          command: bundle install --path=vendor/bundle --jobs 4 --retry 3
+      - save_cache:
+          key: v2-dspace-jruby-{{ checksum "dspace.gemspec" }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
       - run:
           name: Build the YARD documentation
           command: bundle exec yardoc
+      - store_artifacts:
+          path: ~/dspace-jruby/doc
+          destination: doc
+
 workflows:
-  ci:
+  default:
     jobs:
-      - documentation
+      - build
+      - lint:
+          requires:
+            - build
+      - doc:
+          requires:
+            - build

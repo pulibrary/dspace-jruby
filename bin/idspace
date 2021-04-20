@@ -1,11 +1,12 @@
 #!/usr/bin/env jruby
+# frozen_string_literal: true
 
-require "bundler/setup"
-require "dspace"
+require 'bundler/setup'
+require 'dspace'
 
-require "irb"
+require 'irb'
 require 'irb/completion'
 
-puts "DSpace.load   - to connect to dspave installation"
-puts "DSpace.help   - for basic help info"
+puts 'DSpace.load   - to connect to dspave installation'
+puts 'DSpace.help   - for basic help info'
 IRB.start

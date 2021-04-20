@@ -1,26 +1,43 @@
 PATH
   remote: .
   specs:
-    jrdspace (0.0.14)
-      jar
+    dspace-jruby (0.1.0-universal-java-1.8)
       json
 
 GEM
   remote: https://rubygems.org/
   specs:
-    jar (0.0.1)
-    json (2.3.0-java)
-    rake (10.4.2)
+    ast (2.4.1)
+    json (2.3.1-java)
+    parallel (1.19.2)
+    parser (2.7.2.0)
+      ast (~> 2.4.1)
+    rainbow (3.0.0)
+    regexp_parser (1.8.2)
+    rexml (3.2.4)
+    rubocop (0.93.1)
+      parallel (~> 1.10)
+      parser (>= 2.7.1.5)
+      rainbow (>= 2.2.2, < 4.0)
+      regexp_parser (>= 1.8)
+      rexml
+      rubocop-ast (>= 0.6.0)
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (>= 1.4.0, < 2.0)
+    rubocop-ast (0.8.0)
+      parser (>= 2.7.1.5)
+    ruby-progressbar (1.10.1)
+    unicode-display_width (1.7.0)
     yard (0.9.25)
 
 PLATFORMS
   java
 
 DEPENDENCIES
-  bundler (~> 1.10)
-  jrdspace!
-  rake (~> 10.0)
+  bundler (~> 2.1)
+  dspace-jruby!
+  rubocop
   yard
 
 BUNDLED WITH
-   1.10.6
+   2.1.4

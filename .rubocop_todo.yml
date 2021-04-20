@@ -1,0 +1,17 @@
+---
+
+Naming/MethodName:
+  Exclude:
+    - 'lib/dspace.rb'
+    - 'lib/dspace/core/community.rb'
+    - 'lib/dspace/core/constants.rb'
+    - 'lib/dspace/core/dspace_object_behavior.rb'
+    - 'lib/dspace/core/group.rb'
+    - 'lib/dspace/core/metadata_field.rb'
+    - 'lib/dspace/core/work.rb'
+    - 'lib/dspace/core/workflow_item.rb'
+    - 'lib/dspace/core/workspace_item.rb'
+
+Style/ClassVars:
+  Exclude:
+    - 'lib/dspace.rb'
